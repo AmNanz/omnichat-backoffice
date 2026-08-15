@@ -1,0 +1,382 @@
+@use 'tailwindcss';
+@import 'primeicons/primeicons.css';
+
+@theme {
+  --font-sans: Kanit, sans-serif;
+}
+
+@font-face {
+  font-family: 'Kanit';
+  src: url('/fonts/Kanit-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kanit';
+  src: url('/fonts/Kanit-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kanit';
+  src: url('/fonts/Kanit-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kanit';
+  src: url('/fonts/Kanit-SemiBold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+html,
+body,
+app-root {
+  height: 100%;
+  overflow: hidden;
+  font-family: Kanit, sans-serif;
+  font-weight: 400;
+  font-synthesis: none;
+}
+
+html {
+  font-size: 16px;
+}
+
+body,
+.p-component,
+.p-button,
+.p-inputtext,
+.p-select,
+.p-datatable,
+.p-dialog,
+.p-toast,
+.p-confirmdialog,
+.p-tag,
+.p-card,
+button,
+input,
+textarea,
+select {
+  font-family: Kanit, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #eef4f8;
+  color: #1c3550;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.p-button,
+.p-button-label,
+.p-datatable .p-datatable-thead > tr > th {
+  font-weight: 500;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  min-height: 100%;
+  padding-bottom: 1.35rem;
+}
+
+main.content > router-outlet + *,
+main.content > *:not(router-outlet) {
+  display: block;
+  min-height: 100%;
+}
+
+app-page-header {
+  display: block;
+  flex-shrink: 0;
+}
+
+app-login {
+  display: block;
+  height: 100%;
+  overflow: auto;
+}
+
+.page-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.page-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  width: 100%;
+  padding-bottom: 1rem;
+  margin-bottom: 0.25rem;
+  border-bottom: 1px solid #d5e0ea;
+}
+
+.page-filters > input.p-inputtext {
+  flex: 1 1 12rem;
+  min-width: 12rem;
+  width: auto;
+}
+
+.page-filters > p-select,
+.page-filters > p-button {
+  flex: 0 0 auto;
+}
+
+.detail-form {
+  display: block;
+  width: 100%;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.15rem 1.5rem;
+  width: 100%;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.form-field label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: #1c3550;
+}
+
+.form-field input.p-inputtext,
+.form-field textarea {
+  width: 100%;
+}
+
+.form-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  max-width: 36rem;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.25rem;
+  align-items: flex-start;
+}
+
+.form-field-grow {
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+
+.form-field-compact {
+  flex: 0 0 auto;
+}
+
+.form-field-compact p-inputnumber,
+.form-field-compact .p-inputnumber,
+.form-field-compact .p-inputnumber-input,
+.form-field-compact input[type='number'] {
+  width: 8.5rem;
+  max-width: 100%;
+}
+
+.form-compact .form-section-title:first-child {
+  margin-top: 0;
+}
+
+.form-static-value {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.5rem;
+  padding: 0 0.85rem;
+  border: 1px solid #d5e0ea;
+  border-radius: 0.7rem;
+  background: #f8fbfd;
+  color: #3d556b;
+  font-size: 0.95rem;
+}
+
+.form-section-title {
+  grid-column: 1 / -1;
+  margin: 0.35rem 0 0;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid #d5e0ea;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #7a93a8;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  grid-column: 1 / -1;
+  margin-top: 0.35rem;
+  padding-top: 1.15rem;
+  border-top: 1px solid #d5e0ea;
+}
+
+.form-actions-right {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+
+@media (max-width: 720px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.state-message {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 1.15rem 1rem;
+  border-radius: 0.75rem;
+  background: #f8fbfd;
+  border: 1px dashed #c9ddea;
+  color: #7a93a8;
+}
+
+.state-message.error {
+  border-style: solid;
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.p-datatable .col-fit {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.15rem 0;
+}
+
+.stat-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.8rem;
+  display: grid;
+  place-items: center;
+  font-size: 1.05rem;
+  flex-shrink: 0;
+}
+
+.stat-icon.blue {
+  background: #d7e8f4;
+  color: #2f5f86;
+}
+.stat-icon.emerald {
+  background: #d1fae5;
+  color: #047857;
+}
+.stat-icon.amber {
+  background: #fef3c7;
+  color: #b45309;
+}
+.stat-icon.rose {
+  background: #ffe4e6;
+  color: #e11d48;
+}
+.stat-icon.violet {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+.stat-icon.slate {
+  background: #e4eef5;
+  color: #385a73;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #7a93a8;
+}
+
+.stat-value {
+  font-size: 1.45rem;
+  font-weight: 600;
+  color: #1c3550;
+  line-height: 1.2;
+}
+
+.p-datatable .p-datatable-tbody > tr:hover {
+  background: #f3f8fb;
+}
+
+.p-datatable .p-datatable-thead > tr > th,
+.p-datatable .p-datatable-tbody > tr > td,
+.p-paginator,
+.p-select-label,
+.p-button-label {
+  font-size: 1rem;
+}
+
+.page p-card {
+  display: block;
+  width: 100%;
+}
+
+.page .detail-form-fit,
+.page .detail-form-fit p-card,
+.page .detail-form-fit .p-card {
+  width: min(100%, 40rem);
+}
+
+.detail-form-fit .form-compact {
+  max-width: none;
+}
+
+.p-card {
+  width: 100%;
+  box-shadow: 0 10px 28px rgba(28, 53, 80, 0.06);
+  border: 1px solid #d5e0ea;
+  border-radius: 1.15rem;
+}
+
+.page .p-card .p-card-body,
+.page .p-card .p-card-content {
+  padding: 1.5rem 1.6rem;
+}
+

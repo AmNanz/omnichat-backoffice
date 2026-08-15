@@ -1,0 +1,7 @@
+export const environment = {
+  production: true,
+  name: 'production',
+  apiUrl: '/api',
+  defaultLoginEmail: '',
+  defaultLoginPassword: '',
+};
