@@ -12,3 +12,4 @@ src/api/.env.production
 src/api/dist
 src/web/dist
 src/web/.angular
+Readme.Full.md
