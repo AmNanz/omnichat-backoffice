@@ -6,9 +6,7 @@ import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { Package } from '../../../models/package.model';
 import { Profile } from '../../../models/profile.model';
-import { PackagesService } from '../../../services/packages.service';
 import { ProfilesService } from '../../../services/profiles.service';
 import { apiErrorMessage } from '../../../services/http-utils';
 import { ConfirmHelper } from '../../../shared/confirm.helper';
@@ -53,7 +51,7 @@ import { EmptyStateComponent } from '../../../shared/empty-state.component';
             <tr>
               <th>ชื่อ</th>
               <th>รหัส</th>
-              <th>แพ็กเกจ</th>
+              <th>บัญชี</th>
               <th class="col-fit">จัดการ</th>
             </tr>
           </ng-template>
@@ -61,7 +59,7 @@ import { EmptyStateComponent } from '../../../shared/empty-state.component';
             <tr class="clickable-row" (click)="open(row._id)">
               <td>{{ row.name }}</td>
               <td>{{ row.code }}</td>
-              <td>{{ packageName(row.packageId) }}</td>
+              <td>{{ row.accountName || '-' }}</td>
               <td class="col-fit" (click)="$event.stopPropagation()">
                 <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" (onClick)="open(row._id)" ariaLabel="แก้ไข" />
                 <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="remove(row._id)" ariaLabel="ลบ" />
@@ -76,12 +74,10 @@ import { EmptyStateComponent } from '../../../shared/empty-state.component';
 })
 export class ProfilesListComponent implements OnInit {
   private readonly service = inject(ProfilesService);
-  private readonly packagesService = inject(PackagesService);
   private readonly router = inject(Router);
   private readonly helper = inject(ConfirmHelper);
 
   readonly items = signal<Profile[]>([]);
-  readonly packages = signal<Package[]>([]);
   readonly total = signal(0);
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
@@ -91,9 +87,6 @@ export class ProfilesListComponent implements OnInit {
   limit = 20;
 
   ngOnInit(): void {
-    this.packagesService.list({ page: 1, limit: 100 }).subscribe({
-      next: (res) => this.packages.set(res.items),
-    });
     this.load();
   }
 
@@ -141,13 +134,5 @@ export class ProfilesListComponent implements OnInit {
           error: (err) => this.helper.toastError(apiErrorMessage(err)),
         }),
     });
-  }
-
-  packageName(packageId?: string | null): string {
-    if (!packageId) {
-      return '-';
-    }
-    const id = String(packageId);
-    return this.packages().find((pkg) => pkg._id === id)?.name ?? id;
   }
 }

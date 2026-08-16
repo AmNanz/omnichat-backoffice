@@ -6,13 +6,12 @@ import {
   fillHostInput,
   searchList,
 } from './helpers/forms';
-import { createPackageViaUi, createProfileViaUi } from './helpers/entities';
-import { openPackagesPage, openProfilesPage, openRowByText } from './helpers/nav';
-import { uniqueCode, uniqueLabel } from './helpers/unique';
+import { createProfileViaUi } from './helpers/entities';
+import { openProfilesPage, openRowByText } from './helpers/nav';
+import { uniqueCode, uniqueEmail, uniqueLabel } from './helpers/unique';
 
 test.describe.configure({ mode: 'serial' });
 
-const packageName = uniqueLabel('PW ProfPkg');
 const profileName = uniqueLabel('PW Prof');
 const profileCode = uniqueCode('pwprof');
 const editedName = `${profileName} edited`;
@@ -35,9 +34,8 @@ test('does not create a profile with an empty name', async ({ page }) => {
   await expect(page).toHaveURL(/\/backoffice\/profiles\/new/);
 });
 
-test('creates a profile with a package', async ({ page }) => {
-  await createPackageViaUi(page, packageName);
-  await createProfileViaUi(page, profileName, profileCode, packageName);
+test('creates a profile with an account', async ({ page }) => {
+  await createProfileViaUi(page, profileName, profileCode);
 });
 
 test('rejects a duplicate profile code', async ({ page }) => {
@@ -45,6 +43,9 @@ test('rejects a duplicate profile code', async ({ page }) => {
   await clickTestId(page, 'profiles-new');
   await fillHostInput(page, 'profile-name', uniqueLabel('PW DupProf'));
   await fillHostInput(page, 'profile-code', profileCode);
+  await fillHostInput(page, 'profile-account-name', uniqueLabel('PW DupAcc'));
+  await fillHostInput(page, 'profile-account-email', uniqueEmail('pw.dupacc'));
+  await fillHostInput(page, 'profile-account-password', 'Password1');
   await clickTestId(page, 'profile-save');
   await expectToast(page, /already exists|ข้อผิดพลาด|Error/i);
   await expect(page).toHaveURL(/\/backoffice\/profiles\/new/);
@@ -70,11 +71,4 @@ test('deletes a profile', async ({ page }) => {
   await expectToast(page, 'ลบโปรไฟล์แล้ว');
   await searchList(page, 'profiles-search', 'profiles-search-btn', editedName);
   await expect(page.getByRole('cell', { name: editedName })).toHaveCount(0);
-});
-
-test('deletes the profile package fixture', async ({ page }) => {
-  await openPackagesPage(page);
-  await searchList(page, 'packages-search', 'packages-search-btn', packageName);
-  await deleteRowByText(page, packageName);
-  await expectToast(page, 'ลบแพ็กเกจแล้ว');
 });

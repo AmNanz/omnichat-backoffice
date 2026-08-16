@@ -2,9 +2,9 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
   IsDate,
+  IsEmail,
   IsEnum,
   IsInt,
-  IsMongoId,
   IsOptional,
   IsString,
   Min,
@@ -23,12 +23,6 @@ export class CreateProfileDto {
   @IsOptional()
   @IsString()
   code?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @ValidateIf((_, value) => value != null && value !== '')
-  @IsMongoId()
-  packageId?: string | null;
 
   @ApiPropertyOptional({ default: 1 })
   @IsOptional()
@@ -77,4 +71,39 @@ export class CreateProfileDto {
   @IsOptional()
   @IsString()
   notes?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  address?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @ValidateIf((_, value) => value != null && value !== '')
+  @IsEmail()
+  email?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  phone?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  legalEntityNumber?: string;
+
+  @ApiProperty({ description: 'Display name for the new frontoffice user account' })
+  @IsString()
+  @MinLength(2)
+  accountDisplayName!: string;
+
+  @ApiProperty({ description: 'Email for the new frontoffice user account' })
+  @IsEmail()
+  accountEmail!: string;
+
+  @ApiProperty({ description: 'Password for the new frontoffice user account' })
+  @IsString()
+  @MinLength(6)
+  accountPassword!: string;
 }

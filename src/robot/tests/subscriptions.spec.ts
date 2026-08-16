@@ -44,7 +44,7 @@ test('does not create a subscription without a profile', async ({ page }) => {
 
 test('creates a subscription for a profile and package', async ({ page }) => {
   await createPackageViaUi(page, packageName);
-  await createProfileViaUi(page, profileName, profileCode, packageName);
+  await createProfileViaUi(page, profileName, profileCode);
   await openSubscriptionsPage(page);
   await clickTestId(page, 'subscriptions-new');
   await selectOption(page, 'subscription-profile', profileOption);

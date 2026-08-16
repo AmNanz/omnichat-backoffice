@@ -4,11 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
+import { PasswordModule } from 'primeng/password';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
-import { Package } from '../../../models/package.model';
-import { PackagesService } from '../../../services/packages.service';
 import { ProfilesService } from '../../../services/profiles.service';
 import { apiErrorMessage } from '../../../services/http-utils';
 import { ConfirmHelper } from '../../../shared/confirm.helper';
@@ -23,7 +21,7 @@ import { PageHeaderComponent } from '../../../shared/page-header.component';
     ButtonModule,
     CardModule,
     InputTextModule,
-    SelectModule,
+    PasswordModule,
     TextareaModule,
     ProgressSpinnerModule,
     PageHeaderComponent,
@@ -54,23 +52,49 @@ import { PageHeaderComponent } from '../../../shared/page-header.component';
             <input pInputText formControlName="code" data-testid="profile-code" />
           </div>
           <div class="form-field" style="grid-column: 1 / -1">
-            <label>แพ็กเกจ</label>
-            <p-select
-              formControlName="packageId"
-              [options]="packageOptions()"
-              optionLabel="label"
-              optionValue="value"
-              placeholder="ค้นหาหรือเลือกแพ็กเกจ"
-              [filter]="true"
-              filterBy="label"
-              filterPlaceholder="ค้นหาแพ็กเกจ"
-              fluid
-              data-testid="profile-package"
-            />
+            <label>ที่อยู่</label>
+            <textarea pTextarea rows="3" formControlName="address" data-testid="profile-address"></textarea>
           </div>
           <div class="form-field">
+            <label>เมล</label>
+            <input pInputText formControlName="email" data-testid="profile-email" />
+          </div>
+          <div class="form-field">
+            <label>เบอร์โทรศัพท์</label>
+            <input pInputText formControlName="phone" data-testid="profile-phone" />
+          </div>
+          <div class="form-field" style="grid-column: 1 / -1">
+            <label>เลขนิติบุคคล</label>
+            <input pInputText formControlName="legalEntityNumber" data-testid="profile-legal-entity" />
+          </div>
+          <div class="form-field" style="grid-column: 1 / -1">
             <label>หมายเหตุ</label>
             <textarea pTextarea rows="4" formControlName="notes" data-testid="profile-notes"></textarea>
+          </div>
+          <div class="form-section-title">บัญชี</div>
+          @if (isNew) {
+            <p class="form-hint" style="grid-column: 1 / -1">
+              ระบบจะสร้างบทบาท Admin ในแอปแชทให้อัตโนมัติ และผูกกับบัญชีนี้
+            </p>
+          }
+          <div class="form-field">
+            <label>ชื่อที่แสดง</label>
+            <input pInputText formControlName="accountDisplayName" data-testid="profile-account-name" />
+          </div>
+          <div class="form-field">
+            <label>อีเมล</label>
+            <input pInputText formControlName="accountEmail" data-testid="profile-account-email" />
+          </div>
+          <div class="form-field">
+            <label>{{ isNew ? 'รหัสผ่าน' : 'รหัสผ่านใหม่' }}</label>
+            <p-password
+              formControlName="accountPassword"
+              [feedback]="false"
+              [toggleMask]="true"
+              [placeholder]="isNew ? '' : 'เว้นว่างหากไม่เปลี่ยน'"
+              fluid
+              data-testid="profile-account-password"
+            />
           </div>
             </div>
             <div class="form-actions">
@@ -90,13 +114,11 @@ export class ProfileDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly service = inject(ProfilesService);
-  private readonly packagesService = inject(PackagesService);
   private readonly helper = inject(ConfirmHelper);
 
   readonly loading = signal(false);
   readonly saving = signal(false);
   readonly error = signal<string | null>(null);
-  readonly packages = signal<Package[]>([]);
 
   id = '';
   isNew = true;
@@ -104,24 +126,26 @@ export class ProfileDetailComponent implements OnInit {
   readonly form = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(2)]],
     code: [''],
-    packageId: [''],
+    address: [''],
+    email: ['', [Validators.email]],
+    phone: [''],
+    legalEntityNumber: [''],
     notes: [''],
+    accountDisplayName: ['', [Validators.required, Validators.minLength(2)]],
+    accountEmail: ['', [Validators.required, Validators.email]],
+    accountPassword: [''],
   });
-
-  packageOptions(): { label: string; value: string }[] {
-    return [
-      { label: 'None', value: '' },
-      ...this.packages().map((pkg) => ({ label: pkg.name, value: pkg._id })),
-    ];
-  }
 
   ngOnInit(): void {
     this.id = this.route.snapshot.paramMap.get('id') ?? 'new';
     this.isNew = this.id === 'new';
-    this.packagesService.list({ page: 1, limit: 100, status: 'ACTIVE' }).subscribe({
-      next: (res) => this.packages.set(res.items),
-      error: (err) => this.helper.toastError(apiErrorMessage(err, 'โหลดแพ็กเกจไม่สำเร็จ')),
-    });
+    if (this.isNew) {
+      this.form.controls.accountPassword.setValidators([
+        Validators.required,
+        Validators.minLength(6),
+      ]);
+    }
+    this.form.controls.accountPassword.updateValueAndValidity();
     if (!this.isNew) {
       this.loading.set(true);
       this.service.get(this.id).subscribe({
@@ -129,8 +153,13 @@ export class ProfileDetailComponent implements OnInit {
           this.form.patchValue({
             name: item.name,
             code: item.code,
-            packageId: item.packageId ? String(item.packageId) : '',
+            address: item.address ?? '',
+            email: item.email ?? '',
+            phone: item.phone ?? '',
+            legalEntityNumber: item.legalEntityNumber ?? '',
             notes: item.notes ?? '',
+            accountDisplayName: item.accountDisplayName ?? item.accountName ?? '',
+            accountEmail: item.accountEmail ?? '',
           });
           this.loading.set(false);
         },
@@ -148,11 +177,21 @@ export class ProfileDetailComponent implements OnInit {
       return;
     }
     const raw = this.form.getRawValue();
+    if (!this.isNew && raw.accountPassword && raw.accountPassword.length < 6) {
+      this.helper.toastError('รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร');
+      return;
+    }
     const payload = {
       name: raw.name!,
       code: raw.code || undefined,
-      packageId: raw.packageId || null,
-      notes: raw.notes || undefined,
+      address: raw.address || null,
+      email: raw.email || null,
+      phone: raw.phone || null,
+      legalEntityNumber: raw.legalEntityNumber || null,
+      notes: raw.notes || null,
+      accountDisplayName: raw.accountDisplayName!,
+      accountEmail: raw.accountEmail!,
+      ...(raw.accountPassword ? { accountPassword: raw.accountPassword } : {}),
     };
     this.saving.set(true);
     const req = this.isNew

@@ -8,15 +8,16 @@ It manages Profile → Company → User, RBAC, packages/subscriptions, usage lim
 
 ## Separate databases
 
-```
-Backoffice Web  →  Backoffice API  →  MongoDB `omnichat-backoffice*`
-                         │
-                         └── HTTP provision/sync → OmniChat API → MongoDB `omnichat*`
-```
+- Backoffice MongoDB (`MONGO_URI_BACKOFFICE`): Profile, Company, User, packages, billing.
+- Frontoffice MongoDB (`MONGO_URI_FRONTOFFICE`): OmniChat **`users`**, **`companies`**, and **`roles`**. Creating a Profile also creates a login account, a company, an **Admin** role (`slug: administrator`, full chat permissions, scoped by `profileId`), and company membership. `users.profileId` / `companies.profileId` / `roles.profileId` → backoffice Profile `_id`. Profile stores `accountId` → `users._id`. Backoffice company stores `omnichatCompanyId`.
+- OmniChat HTTP adapter still provisions companies/users (`omnichatCompanyId` / `omnichatUserId`) when `OMNICHAT_API_TOKEN` is set.
 
-- Backoffice **never** reads/writes OmniChat collections directly.
-- Link fields: `companies.omnichatCompanyId`, `users.omnichatUserId`.
-- Adapter: `src/api/src/modules/omnichat-integration/` (no-op when `OMNICHAT_API_TOKEN` is empty).
+```
+Backoffice Web  →  Backoffice API  →  MongoDB `omnichat-backoffice*`  (profiles, companies, users, …)
+                         │
+                         ├── MongoDB `omnichat*`  (users as Account)
+                         └── HTTP provision/sync → OmniChat API
+```
 
 ## Folder map
 
@@ -32,7 +33,7 @@ Omnichat-Backoffice/
 
 ## Domain model
 
-- **Profile** — tenant group with `companyLimit` / `userLimit`, dates, status
+- **Profile** — tenant group; 1:1 with a frontoffice **user** and default **company**. Frontoffice **roles/permissions** are scoped by `profileId` (shared across companies in that profile).
 - **Company** — belongs to Profile; optional package; Omnichat link id
 - **User** — Backoffice identity; `companyIds[]`, `roleIds[]`; Omnichat link id
 - **Role / Permission** — Backoffice RBAC (`module.action`), independent from OmniChat chat roles
@@ -86,7 +87,7 @@ Seed: `admin@backoffice.local` / `admin123`
 | local | `omnichat-backoffice-local` |
 | development / production | `omnichat-backoffice` |
 
-Do not reuse OmniChat `MONGO_URI` / JWT secrets. Backoffice uses `MONGO_URI_BACKOFFICE`.
+Do not reuse OmniChat JWT secrets. Backoffice uses `MONGO_URI_BACKOFFICE` plus `MONGO_URI_FRONTOFFICE` for Account records.
 
 ## Phases delivered
 

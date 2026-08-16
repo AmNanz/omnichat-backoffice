@@ -4,6 +4,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { WinstonModule } from 'nest-winston';
+import { FRONTOFFICE_CONNECTION } from './config/database.constants';
 import {
   maskMongoUri,
   resolveAppEnv,
@@ -12,6 +13,8 @@ import {
 import { winstonConfig } from './config/winston.config';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { AuthModule } from './modules/auth/auth.module';
+import { FrontCompaniesModule } from './modules/front-companies/front-companies.module';
+import { FrontUsersModule } from './modules/front-users/front-users.module';
 import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
 import { CompaniesModule } from './modules/companies/companies.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
@@ -61,10 +64,26 @@ import { UsersModule } from './modules/users/users.module';
         return { uri: mongoUri };
       },
     }),
+    MongooseModule.forRootAsync({
+      connectionName: FRONTOFFICE_CONNECTION,
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const logger = new Logger('DatabaseConfig');
+        const mongoUri =
+          configService.get<string>('MONGO_URI_FRONTOFFICE') ??
+          'mongodb://localhost:27017/omnichat-local';
+
+        logger.log(`MONGO_URI_FRONTOFFICE=${maskMongoUri(mongoUri)}`);
+
+        return { uri: mongoUri };
+      },
+    }),
     JobsModule,
     HealthModule,
     AuthModule,
     ProfilesModule,
+    FrontUsersModule,
+    FrontCompaniesModule,
     CompaniesModule,
     UsersModule,
     RolesModule,

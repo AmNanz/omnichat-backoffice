@@ -10,7 +10,7 @@ import { CompaniesService } from './services/companies.service';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Company.name, schema: CompanySchema }]),
-    ProfilesModule,
+    forwardRef(() => ProfilesModule),
     forwardRef(() => OmnichatIntegrationModule),
   ],
   controllers: [CompaniesController],

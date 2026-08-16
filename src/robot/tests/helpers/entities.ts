@@ -4,8 +4,8 @@ import {
   expectToast,
   fillHostInput,
   searchList,
-  selectOption,
 } from './forms';
+import { uniqueEmail } from './unique';
 import { openPackagesPage, openProfilesPage } from './nav';
 
 export async function createPackageViaUi(
@@ -31,16 +31,15 @@ export async function createProfileViaUi(
   page: Page,
   name: string,
   code: string,
-  packageName?: string,
 ): Promise<void> {
   await openProfilesPage(page);
   await clickTestId(page, 'profiles-new');
   await expect(page.getByRole('heading', { name: 'เพิ่มโปรไฟล์' })).toBeVisible();
   await fillHostInput(page, 'profile-name', name);
   await fillHostInput(page, 'profile-code', code);
-  if (packageName) {
-    await selectOption(page, 'profile-package', packageName);
-  }
+  await fillHostInput(page, 'profile-account-name', `${name} Acc`);
+  await fillHostInput(page, 'profile-account-email', uniqueEmail(`pw.${code}`));
+  await fillHostInput(page, 'profile-account-password', 'Password1');
   await clickTestId(page, 'profile-save');
   await expectToast(page, 'บันทึกโปรไฟล์แล้ว');
   await expect(page).toHaveURL(/\/backoffice\/profiles$/);

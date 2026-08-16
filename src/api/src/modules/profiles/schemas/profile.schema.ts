@@ -38,6 +38,24 @@ export class Profile {
   @Prop({ type: String, default: null })
   notes!: string | null;
 
+  @Prop({ type: String, default: null, trim: true })
+  address!: string | null;
+
+  @Prop({ type: String, default: null, lowercase: true, trim: true })
+  email!: string | null;
+
+  @Prop({ type: String, default: null, trim: true })
+  phone!: string | null;
+
+  @Prop({ type: String, default: null, trim: true })
+  legalEntityNumber!: string | null;
+
+  @Prop({ type: String, default: null, index: true })
+  accountId!: string | null;
+
+  @Prop({ type: String, default: null, trim: true })
+  accountName!: string | null;
+
   @Prop({ type: Boolean, default: false })
   isDeleted!: boolean;
 }
