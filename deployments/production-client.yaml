@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: gunxtech-ufin-omnichat-backoffice-client-deployment
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: gunxtech-ufin-omnichat-backoffice-client
