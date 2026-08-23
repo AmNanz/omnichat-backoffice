@@ -10,7 +10,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { IsMongoId, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsInt, IsMongoId, IsOptional, Max, Min } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { RequirePermissions } from '../../../common/decorators/require-permissions.decorator';
@@ -24,6 +25,16 @@ class CompanyListQueryDto extends PaginationQueryDto {
   @IsOptional()
   @IsMongoId()
   profileId?: string;
+
+  @ApiPropertyOptional({
+    description: 'Active companies with expirationDate within N days from now',
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(365)
+  expiringWithinDays?: number;
 }
 
 @ApiTags('Companies')

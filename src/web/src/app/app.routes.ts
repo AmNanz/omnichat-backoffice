@@ -5,6 +5,8 @@ import { BackofficeLayoutComponent } from './features/backoffice/layout/backoffi
 import { DashboardComponent } from './features/backoffice/dashboard/dashboard.component';
 import { ProfilesListComponent } from './features/backoffice/profiles/profiles-list.component';
 import { ProfileDetailComponent } from './features/backoffice/profiles/profile-detail.component';
+import { CompaniesListComponent } from './features/backoffice/companies/companies-list.component';
+import { CompanyDetailComponent } from './features/backoffice/companies/company-detail.component';
 import { UsersListComponent } from './features/backoffice/users/users-list.component';
 import { UserDetailComponent } from './features/backoffice/users/user-detail.component';
 import { RolesListComponent } from './features/backoffice/roles/roles-list.component';
@@ -28,6 +30,8 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'profiles', component: ProfilesListComponent },
       { path: 'profiles/:id', component: ProfileDetailComponent },
+      { path: 'companies', component: CompaniesListComponent },
+      { path: 'companies/:id', component: CompanyDetailComponent },
       { path: 'users', component: UsersListComponent },
       { path: 'users/:id', component: UserDetailComponent },
       { path: 'roles', component: RolesListComponent },

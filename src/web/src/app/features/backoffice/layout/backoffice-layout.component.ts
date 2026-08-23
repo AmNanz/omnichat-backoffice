@@ -264,7 +264,10 @@ export class BackofficeLayoutComponent {
   readonly navGroups: NavGroup[] = [
     {
       label: 'ผู้เช่า',
-      items: [{ label: 'โปรไฟล์', route: '/backoffice/profiles', icon: 'pi pi-id-card' }],
+      items: [
+        { label: 'โปรไฟล์', route: '/backoffice/profiles', icon: 'pi pi-id-card' },
+        { label: 'บริษัท', route: '/backoffice/companies', icon: 'pi pi-building' },
+      ],
     },
     {
       label: 'การเรียกเก็บเงิน',
@@ -305,6 +308,7 @@ export class BackofficeLayoutComponent {
       '/backoffice/users': 'nav-users',
       '/backoffice/packages': 'nav-packages',
       '/backoffice/profiles': 'nav-profiles',
+      '/backoffice/companies': 'nav-companies',
       '/backoffice/subscriptions': 'nav-subscriptions',
     };
     return ids[route] ?? null;

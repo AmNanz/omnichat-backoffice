@@ -78,7 +78,12 @@ export class CompaniesService {
     return company;
   }
 
-  async findAll(query: PaginationQueryDto & { profileId?: string }) {
+  async findAll(
+    query: PaginationQueryDto & {
+      profileId?: string;
+      expiringWithinDays?: number;
+    },
+  ) {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
     const filter: QueryFilter<CompanyDocument> = {};
@@ -93,6 +98,14 @@ export class CompaniesService {
         { name: { $regex: query.search, $options: 'i' } },
         { slug: { $regex: query.search, $options: 'i' } },
       ];
+    }
+    if (query.expiringWithinDays != null) {
+      const now = new Date();
+      const until = new Date(
+        now.getTime() + query.expiringWithinDays * 24 * 60 * 60 * 1000,
+      );
+      filter.status = EntityStatus.ACTIVE;
+      filter.expirationDate = { $gt: now, $lte: until };
     }
     const [items, total] = await this.companiesRepository.findMany(
       filter,

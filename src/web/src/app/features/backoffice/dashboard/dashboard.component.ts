@@ -15,6 +15,8 @@ interface StatCard {
   value: string | number;
   icon: string;
   tone: 'blue' | 'emerald' | 'amber' | 'rose' | 'violet' | 'slate';
+  link?: string[];
+  queryParams?: Record<string, string>;
 }
 
 @Component({
@@ -90,6 +92,17 @@ interface StatCard {
       border: 1px solid #e4edf3;
       border-radius: 1.05rem;
       box-shadow: 0 8px 22px rgba(28, 53, 80, 0.05);
+    }
+
+    a.dash-card {
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    a.dash-card:hover {
+      border-color: #b9cede;
+      box-shadow: 0 10px 24px rgba(28, 53, 80, 0.08);
     }
 
     .dash-card-top {
@@ -269,18 +282,33 @@ interface StatCard {
         @if (summary(); as data) {
         <div class="stat-grid">
           @for (card of cards(data); track card.label) {
-            <article class="dash-card">
-              <div class="dash-card-top">
-                <div class="stat-icon" [class]="card.tone">
-                  <i [class]="card.icon"></i>
+            @if (card.link; as link) {
+              <a class="dash-card" [routerLink]="link" [queryParams]="card.queryParams ?? null">
+                <div class="dash-card-top">
+                  <div class="stat-icon" [class]="card.tone">
+                    <i [class]="card.icon"></i>
+                  </div>
+                  <div>
+                    <div class="stat-label">{{ card.label }}</div>
+                    <div class="stat-value">{{ card.value }}</div>
+                  </div>
                 </div>
-                <div>
-                  <div class="stat-label">{{ card.label }}</div>
-                  <div class="stat-value">{{ card.value }}</div>
+                <div class="stat-foot">คลิกเพื่อดูรายการ</div>
+              </a>
+            } @else {
+              <article class="dash-card">
+                <div class="dash-card-top">
+                  <div class="stat-icon" [class]="card.tone">
+                    <i [class]="card.icon"></i>
+                  </div>
+                  <div>
+                    <div class="stat-label">{{ card.label }}</div>
+                    <div class="stat-value">{{ card.value }}</div>
+                  </div>
                 </div>
-              </div>
-              <div class="stat-foot">ข้อมูล ณ ปัจจุบัน</div>
-            </article>
+                <div class="stat-foot">ข้อมูล ณ ปัจจุบัน</div>
+              </article>
+            }
           }
         </div>
 
@@ -360,12 +388,39 @@ export class DashboardComponent implements OnInit {
   cards(data: DashboardSummary): StatCard[] {
     return [
       { label: 'โปรไฟล์', value: data.totalProfiles, icon: 'pi pi-id-card', tone: 'blue' },
-      { label: 'บริษัท', value: data.totalCompanies, icon: 'pi pi-building', tone: 'violet' },
+      {
+        label: 'บริษัท',
+        value: data.totalCompanies,
+        icon: 'pi pi-building',
+        tone: 'violet',
+        link: ['/backoffice/companies'],
+      },
       { label: 'ผู้ใช้', value: data.totalUsers, icon: 'pi pi-users', tone: 'slate' },
-      { label: 'บริษัทที่ใช้งาน', value: data.activeCompanies, icon: 'pi pi-check-circle', tone: 'emerald' },
+      {
+        label: 'บริษัทที่ใช้งาน',
+        value: data.activeCompanies,
+        icon: 'pi pi-check-circle',
+        tone: 'emerald',
+        link: ['/backoffice/companies'],
+        queryParams: { status: 'ACTIVE' },
+      },
       { label: 'ผู้ใช้ที่ใช้งาน', value: data.activeUsers, icon: 'pi pi-user', tone: 'emerald' },
-      { label: 'บริษัทหมดอายุ', value: data.expiredCompanies, icon: 'pi pi-times-circle', tone: 'rose' },
-      { label: 'ใกล้หมดอายุ (บริษัท)', value: data.expiringSoon.companies, icon: 'pi pi-clock', tone: 'amber' },
+      {
+        label: 'บริษัทหมดอายุ',
+        value: data.expiredCompanies,
+        icon: 'pi pi-times-circle',
+        tone: 'rose',
+        link: ['/backoffice/companies'],
+        queryParams: { status: 'EXPIRED' },
+      },
+      {
+        label: 'ใกล้หมดอายุ (บริษัท)',
+        value: data.expiringSoon.companies,
+        icon: 'pi pi-clock',
+        tone: 'amber',
+        link: ['/backoffice/companies'],
+        queryParams: { expiringWithinDays: '30' },
+      },
       { label: 'ใกล้หมดอายุ (ผู้ใช้)', value: data.expiringSoon.users, icon: 'pi pi-hourglass', tone: 'amber' },
       { label: 'การสมัครที่ใช้งาน', value: data.activeSubscriptions, icon: 'pi pi-sync', tone: 'blue' },
       { label: 'รายได้ที่ชำระแล้ว', value: data.revenue, icon: 'pi pi-wallet', tone: 'emerald' },
