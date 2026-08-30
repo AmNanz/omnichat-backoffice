@@ -436,6 +436,9 @@ app-login {
 
 .panel-body {
   padding: 2px 6px 0;
+  /* Wide tables scroll inside the panel rather than clipping — on a phone the
+     later columns are otherwise unreachable. */
+  overflow-x: auto;
 }
 
 .panel-foot {
@@ -799,6 +802,11 @@ app-login {
 .page-filters > p-select,
 .page-filters > p-button {
   flex: 0 0 auto;
+}
+
+p-select,
+.p-select {
+  max-width: 100%;
 }
 
 .search-field {
@@ -1249,4 +1257,47 @@ app-login {
 .p-confirmdialog .p-confirmdialog-message {
   color: var(--color-neutral-300);
   font-size: 14px;
+}
+
+/* ── narrow viewports ─────────────────────────────────────────────────────
+   Filter controls carry fixed width utilities (w-80, w-64, w-44) that overflow
+   a phone-width card, so below this breakpoint they each take a full row. */
+@media (max-width: 720px) {
+  .page-filters > p-select,
+  .page-filters > p-button,
+  .panel-head > p-select,
+  .panel-head > p-button {
+    width: 100% !important;
+    flex: 1 1 100%;
+  }
+
+  .page-filters > p-select .p-select,
+  .panel-head > p-select .p-select {
+    width: 100%;
+  }
+
+  .search-field {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .panel-head > span {
+    margin-left: 0 !important;
+  }
+
+  .page {
+    gap: var(--space-4);
+  }
+
+  .surface-pad {
+    padding: var(--space-4) 12px;
+  }
+
+  .stat-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
