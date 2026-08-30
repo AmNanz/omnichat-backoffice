@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
@@ -9,12 +9,18 @@ import { AuditLog, DashboardSummary } from '../../../models/misc.model';
 import { AuditLogsService, DashboardService } from '../../../services/misc.service';
 import { apiErrorMessage } from '../../../services/http-utils';
 import { EmptyStateComponent } from '../../../shared/empty-state.component';
+import { PageHeaderComponent } from '../../../shared/page-header.component';
+import { actionChipClass, actionIcon, initials, moduleLabel } from '../../../shared/ui';
+
+type Tone = 'accent' | 'good' | 'warn' | 'bad' | 'mute';
 
 interface StatCard {
   label: string;
   value: string | number;
   icon: string;
-  tone: 'blue' | 'emerald' | 'amber' | 'rose' | 'violet' | 'slate';
+  tone: Tone;
+  /** Money and other large figures read better with thousands separators. */
+  numeric?: boolean;
   link?: string[];
   queryParams?: Record<string, string>;
 }
@@ -22,187 +28,137 @@ interface StatCard {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [DatePipe, RouterLink, ButtonModule, ProgressSpinnerModule, EmptyStateComponent],
+  imports: [
+    DatePipe,
+    DecimalPipe,
+    RouterLink,
+    ButtonModule,
+    ProgressSpinnerModule,
+    EmptyStateComponent,
+    PageHeaderComponent,
+  ],
   styles: `
-    .dash-head {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 1rem;
-    }
-
-    .dash-kicker {
-      margin: 0 0 0.35rem;
-      color: #7a93a8;
-      font-size: 0.9rem;
-      font-weight: 500;
-    }
-
-    .dash-head h1 {
-      margin: 0;
-      color: #1c3550;
-      font-size: 1.85rem;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-    }
-
-    .dash-head p {
-      margin: 0.35rem 0 0;
-      color: #5b738a;
-    }
-
-    .dash-actions {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 0.7rem;
-    }
-
     .range-chip {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      min-height: 2.6rem;
-      padding: 0 0.95rem;
-      background: #fff;
-      border: 1px solid #d5e0ea;
-      border-radius: 0.75rem;
-      color: #3d556b;
-      font-size: 0.92rem;
-      box-shadow: 0 6px 16px rgba(28, 53, 80, 0.04);
+      gap: 6px;
+      min-height: 34px;
+      padding: 0 10px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-divider);
+      border-radius: var(--radius-md);
+      color: var(--color-neutral-400);
+      font-size: 13px;
+      white-space: nowrap;
     }
 
     .range-chip i {
-      color: #6699bb;
+      color: var(--color-accent);
+      font-size: 15px;
     }
 
-    .stat-grid {
+    .dash-grid {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 0.85rem;
+      gap: 10px;
     }
 
     .dash-card {
       display: flex;
       flex-direction: column;
-      min-height: 8.4rem;
-      padding: 1rem 1.05rem 0.85rem;
-      background: #fff;
-      border: 1px solid #e4edf3;
-      border-radius: 1.05rem;
-      box-shadow: 0 8px 22px rgba(28, 53, 80, 0.05);
+      gap: 4px;
+      min-height: 7.5rem;
+      padding: 12px 14px;
+      background: var(--color-surface);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
     }
 
     a.dash-card {
       text-decoration: none;
       color: inherit;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      transition: box-shadow 0.15s ease;
     }
 
     a.dash-card:hover {
-      border-color: #b9cede;
-      box-shadow: 0 10px 24px rgba(28, 53, 80, 0.08);
+      box-shadow: var(--shadow-md);
     }
 
     .dash-card-top {
       display: flex;
       align-items: flex-start;
-      gap: 0.75rem;
+      gap: 10px;
     }
 
-    .stat-icon {
-      width: 2.4rem;
-      height: 2.4rem;
+    /* Tinted round icon wells — the tint comes from the status tokens, so a
+       card's colour means the same thing here as in a status chip. */
+    .tone-well {
+      width: 32px;
+      height: 32px;
       border-radius: 999px;
       display: grid;
       place-items: center;
-      font-size: 0.95rem;
+      font-size: 15px;
       flex-shrink: 0;
     }
 
-    .stat-icon.blue { background: #d7e8f4; color: #2f5f86; }
-    .stat-icon.emerald { background: #d8f3e7; color: #1f8a5b; }
-    .stat-icon.amber { background: #fdecc8; color: #c47b14; }
-    .stat-icon.rose { background: #fde2e4; color: #d13b4a; }
-    .stat-icon.violet { background: #e8e2fb; color: #6b4ec4; }
-    .stat-icon.slate { background: #e4eef5; color: #385a73; }
+    .tone-well.accent {
+      background: var(--tag-accent-bg);
+      color: var(--tag-accent-fg);
+    }
+    .tone-well.good {
+      background: var(--tag-active-bg);
+      color: var(--tag-active-fg);
+    }
+    .tone-well.warn {
+      background: var(--tag-soon-bg);
+      color: var(--tag-soon-fg);
+    }
+    .tone-well.bad {
+      background: var(--tag-expired-bg);
+      color: var(--tag-expired-fg);
+    }
+    .tone-well.mute {
+      background: var(--tag-suspended-bg);
+      color: var(--tag-suspended-fg);
+    }
 
-    .stat-label {
-      font-size: 0.86rem;
-      color: #7a93a8;
+    .dash-card .label {
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--color-neutral-500);
       line-height: 1.3;
     }
 
-    .stat-value {
-      margin-top: 0.2rem;
-      font-size: 1.7rem;
-      font-weight: 700;
-      color: #1c3550;
-      line-height: 1.1;
-      letter-spacing: -0.03em;
-    }
-
-    .stat-foot {
-      margin-top: auto;
-      padding-top: 0.7rem;
-      border-top: 1px solid #eef3f7;
-      color: #94a3b8;
-      font-size: 0.75rem;
-    }
-
-    .panel {
-      background: #fff;
-      border: 1px solid #e4edf3;
-      border-radius: 1.15rem;
-      box-shadow: 0 8px 22px rgba(28, 53, 80, 0.05);
-      padding: 1.15rem 1.2rem 1.1rem;
-      min-width: 0;
-    }
-
-    .panel-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.75rem;
-      margin-bottom: 0.95rem;
-    }
-
-    .panel-head h2 {
-      margin: 0;
-      color: #1c3550;
-      font-size: 1.05rem;
-      font-weight: 700;
-    }
-
-    .panel-link {
-      color: #5589ac;
-      font-size: 0.85rem;
+    .dash-card .value {
+      margin-top: 2px;
+      font-size: 24px;
       font-weight: 600;
-      text-decoration: none;
+      color: var(--color-text);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
     }
 
-    .panel-link:hover {
-      text-decoration: underline;
-    }
-
-    .activity-list {
-      display: flex;
-      flex-direction: column;
+    .dash-card .foot {
+      margin-top: auto;
+      padding-top: 10px;
+      box-shadow: inset 0 1px 0 var(--color-divider);
+      color: var(--color-neutral-600);
+      font-size: 11px;
     }
 
     .activity-row {
       display: grid;
       grid-template-columns: auto minmax(0, 1fr) auto;
-      gap: 0.75rem;
+      gap: 10px;
       align-items: center;
-      padding: 0.75rem 0;
-      border-bottom: 1px solid #eef3f7;
+      padding: 9px 0;
+      box-shadow: inset 0 -1px 0 var(--color-divider);
     }
 
     .activity-row:last-child {
-      border-bottom: 0;
-      padding-bottom: 0.15rem;
+      box-shadow: none;
     }
 
     .activity-copy {
@@ -211,132 +167,142 @@ interface StatCard {
 
     .activity-copy strong {
       display: block;
-      color: #1c3550;
-      font-size: 0.92rem;
-      font-weight: 600;
+      font-size: 13px;
+      font-weight: 500;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
     .activity-copy span {
-      color: #7a93a8;
-      font-size: 0.8rem;
+      color: var(--color-neutral-500);
+      font-size: 11px;
     }
 
     .activity-time {
-      color: #94a3b8;
-      font-size: 0.75rem;
+      color: var(--color-neutral-600);
+      font-size: 11px;
       white-space: nowrap;
     }
 
-    .dash-loading,
-    .dash-error {
+    .dash-state {
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 12rem;
-      padding: 2rem;
-      background: #fff;
-      border: 1px solid #d5e0ea;
-      border-radius: 1.15rem;
+      padding: var(--space-8);
+      background: var(--color-surface);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
     }
 
     @media (max-width: 1280px) {
-      .stat-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .dash-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
     }
     @media (max-width: 1080px) {
-      .stat-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .dash-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
     }
     @media (max-width: 720px) {
-      .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .dash-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
   `,
   template: `
     <div class="page">
-      <div class="dash-head">
-        <div>
-          <div class="dash-kicker">ระบบจัดการ</div>
-          <h1>แดชบอร์ด</h1>
-          <p>ภาพรวมผู้เช่า การเรียกเก็บเงิน และความเสี่ยง</p>
+      <app-page-header title="แดชบอร์ด" subtitle="ภาพรวมผู้เช่า การเรียกเก็บเงิน และความเสี่ยง">
+        <div class="range-chip">
+          <i class="ph ph-calendar-blank"></i>
+          <span>{{ rangeStart | date: 'd MMM y' }} — {{ rangeEnd | date: 'd MMM y' }}</span>
         </div>
-        <div class="dash-actions">
-          <div class="range-chip">
-            <i class="pi pi-calendar"></i>
-            <span>{{ rangeStart | date:'d MMM y' }} - {{ rangeEnd | date:'d MMM y' }}</span>
-          </div>
-          <p-button
-            label="รีเฟรชข้อมูล"
-            icon="pi pi-refresh"
-            (onClick)="load(true)"
-            [loading]="refreshing()"
-          />
-        </div>
-      </div>
+        <p-button
+          label="รีเฟรช"
+          icon="ph ph-arrows-clockwise"
+          severity="secondary"
+          (onClick)="load(true)"
+          [loading]="refreshing()"
+        />
+      </app-page-header>
 
       @if (loading()) {
-        <div class="dash-loading"><p-progressSpinner /></div>
+        <div class="dash-state"><p-progressSpinner /></div>
       } @else if (error()) {
-        <div class="dash-error"><app-empty-state [message]="error()!" variant="error" /></div>
-      } @else {
-        @if (summary(); as data) {
-        <div class="stat-grid">
-          @for (card of cards(data); track card.label) {
+        <div class="dash-state"><app-empty-state [message]="error()!" variant="error" /></div>
+      } @else if (summary()) {
+        <div class="dash-grid">
+          @for (card of cards(summary()!); track card.label) {
             @if (card.link; as link) {
               <a class="dash-card" [routerLink]="link" [queryParams]="card.queryParams ?? null">
                 <div class="dash-card-top">
-                  <div class="stat-icon" [class]="card.tone">
+                  <div class="tone-well" [class]="'tone-well ' + card.tone">
                     <i [class]="card.icon"></i>
                   </div>
                   <div>
-                    <div class="stat-label">{{ card.label }}</div>
-                    <div class="stat-value">{{ card.value }}</div>
+                    <div class="label">{{ card.label }}</div>
+                    <div class="value">
+                      {{ card.numeric ? (+card.value | number) : card.value }}
+                    </div>
                   </div>
                 </div>
-                <div class="stat-foot">คลิกเพื่อดูรายการ</div>
+                <div class="foot">คลิกเพื่อดูรายการ</div>
               </a>
             } @else {
               <article class="dash-card">
                 <div class="dash-card-top">
-                  <div class="stat-icon" [class]="card.tone">
+                  <div class="tone-well" [class]="'tone-well ' + card.tone">
                     <i [class]="card.icon"></i>
                   </div>
                   <div>
-                    <div class="stat-label">{{ card.label }}</div>
-                    <div class="stat-value">{{ card.value }}</div>
+                    <div class="label">{{ card.label }}</div>
+                    <div class="value">
+                      {{ card.numeric ? (+card.value | number) : card.value }}
+                    </div>
                   </div>
                 </div>
-                <div class="stat-foot">ข้อมูล ณ ปัจจุบัน</div>
+                <div class="foot">ข้อมูล ณ ปัจจุบัน</div>
               </article>
             }
           }
         </div>
 
-        <section class="panel">
-          <div class="panel-head">
-            <h2>กิจกรรมล่าสุด</h2>
-            <a routerLink="/backoffice/audit-logs" class="panel-link">ดูทั้งหมด</a>
+        <section class="surface-card surface-pad">
+          <div class="flex items-center justify-between gap-3 mb-3">
+            <div>
+              <div class="text-[15px] font-medium">กิจกรรมล่าสุด</div>
+              <div class="text-[12px] text-[var(--color-neutral-500)]">
+                จากบันทึกการใช้งานทั้งระบบ
+              </div>
+            </div>
+            <a routerLink="/backoffice/audit-logs" class="text-[12px]">ดูทั้งหมด</a>
           </div>
+
           @if (!activities().length) {
             <app-empty-state message="ยังไม่มีกิจกรรมล่าสุด" />
           } @else {
-            <div class="activity-list">
-              @for (item of activities(); track item._id) {
-                <div class="activity-row">
-                  <div class="stat-icon" [class]="activityTone(item.action)">
-                    <i [class]="activityIcon(item.action)"></i>
-                  </div>
-                  <div class="activity-copy">
-                    <strong>{{ item.userName || item.userId || 'ระบบ' }}</strong>
-                    <span>{{ enumLabel(item.action) }} · {{ item.module }}</span>
-                  </div>
-                  <div class="activity-time">{{ item.createdAt | date:'d MMM y HH:mm' }}</div>
+            @for (item of activities(); track item._id) {
+              <div class="activity-row">
+                <span class="initials initials-round">
+                  {{ initials(item.userName || item.userId) }}
+                </span>
+                <div class="activity-copy">
+                  <strong>{{ item.userName || item.userId || 'ระบบ' }}</strong>
+                  <span>{{ moduleLabel(item.module) }}</span>
                 </div>
-              }
-            </div>
+                <div class="flex items-center gap-3">
+                  <span [class]="actionChipClass(item.action)">
+                    <i [class]="actionIcon(item.action)"></i>
+                    {{ enumLabel(item.action) }}
+                  </span>
+                  <span class="activity-time">{{ item.createdAt | date: 'd MMM y HH:mm' }}</span>
+                </div>
+              </div>
+            }
           }
         </section>
-        }
       }
     </div>
   `,
@@ -346,6 +312,11 @@ export class DashboardComponent implements OnInit {
   private readonly auditLogsService = inject(AuditLogsService);
 
   readonly enumLabel = enumLabel;
+  readonly actionIcon = actionIcon;
+  readonly actionChipClass = actionChipClass;
+  readonly initials = initials;
+  readonly moduleLabel = moduleLabel;
+
   readonly loading = signal(true);
   readonly refreshing = signal(false);
   readonly error = signal<string | null>(null);
@@ -387,62 +358,64 @@ export class DashboardComponent implements OnInit {
 
   cards(data: DashboardSummary): StatCard[] {
     return [
-      { label: 'โปรไฟล์', value: data.totalProfiles, icon: 'pi pi-id-card', tone: 'blue' },
+      {
+        label: 'โปรไฟล์',
+        value: data.totalProfiles,
+        icon: 'ph ph-identification-card',
+        tone: 'accent',
+      },
       {
         label: 'บริษัท',
         value: data.totalCompanies,
-        icon: 'pi pi-building',
-        tone: 'violet',
+        icon: 'ph ph-buildings',
+        tone: 'accent',
         link: ['/backoffice/companies'],
       },
-      { label: 'ผู้ใช้', value: data.totalUsers, icon: 'pi pi-users', tone: 'slate' },
+      { label: 'ผู้ใช้', value: data.totalUsers, icon: 'ph ph-users-three', tone: 'mute' },
       {
         label: 'บริษัทที่ใช้งาน',
         value: data.activeCompanies,
-        icon: 'pi pi-check-circle',
-        tone: 'emerald',
+        icon: 'ph ph-check-circle',
+        tone: 'good',
         link: ['/backoffice/companies'],
         queryParams: { status: 'ACTIVE' },
       },
-      { label: 'ผู้ใช้ที่ใช้งาน', value: data.activeUsers, icon: 'pi pi-user', tone: 'emerald' },
+      { label: 'ผู้ใช้ที่ใช้งาน', value: data.activeUsers, icon: 'ph ph-user', tone: 'good' },
       {
         label: 'บริษัทหมดอายุ',
         value: data.expiredCompanies,
-        icon: 'pi pi-times-circle',
-        tone: 'rose',
+        icon: 'ph ph-x-circle',
+        tone: 'bad',
         link: ['/backoffice/companies'],
         queryParams: { status: 'EXPIRED' },
       },
       {
         label: 'ใกล้หมดอายุ (บริษัท)',
         value: data.expiringSoon.companies,
-        icon: 'pi pi-clock',
-        tone: 'amber',
+        icon: 'ph ph-clock-countdown',
+        tone: 'warn',
         link: ['/backoffice/companies'],
         queryParams: { expiringWithinDays: '30' },
       },
-      { label: 'ใกล้หมดอายุ (ผู้ใช้)', value: data.expiringSoon.users, icon: 'pi pi-hourglass', tone: 'amber' },
-      { label: 'การสมัครที่ใช้งาน', value: data.activeSubscriptions, icon: 'pi pi-sync', tone: 'blue' },
-      { label: 'รายได้ที่ชำระแล้ว', value: data.revenue, icon: 'pi pi-wallet', tone: 'emerald' },
+      {
+        label: 'ใกล้หมดอายุ (ผู้ใช้)',
+        value: data.expiringSoon.users,
+        icon: 'ph ph-hourglass',
+        tone: 'warn',
+      },
+      {
+        label: 'การสมัครที่ใช้งาน',
+        value: data.activeSubscriptions,
+        icon: 'ph ph-arrows-clockwise',
+        tone: 'accent',
+      },
+      {
+        label: 'รายได้ที่ชำระแล้ว',
+        value: data.revenue,
+        icon: 'ph ph-wallet',
+        tone: 'good',
+        numeric: true,
+      },
     ];
-  }
-
-  activityIcon(action: string): string {
-    if (action === 'LOGIN') return 'pi pi-sign-in';
-    if (action === 'LOGOUT') return 'pi pi-sign-out';
-    if (action === 'CREATE') return 'pi pi-plus';
-    if (action === 'UPDATE') return 'pi pi-pencil';
-    if (action === 'DELETE') return 'pi pi-trash';
-    if (action === 'ENABLE') return 'pi pi-check';
-    if (action === 'DISABLE') return 'pi pi-ban';
-    return 'pi pi-circle';
-  }
-
-  activityTone(action: string): StatCard['tone'] {
-    if (action === 'LOGIN' || action === 'CREATE' || action === 'ENABLE') return 'emerald';
-    if (action === 'DELETE' || action === 'DISABLE') return 'rose';
-    if (action === 'UPDATE') return 'violet';
-    if (action === 'LOGOUT') return 'slate';
-    return 'blue';
   }
 }

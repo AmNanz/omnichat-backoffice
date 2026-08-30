@@ -77,7 +77,7 @@ import { EmptyStateComponent } from '../../../shared/empty-state.component';
               <p-button type="button" label="ลบ" severity="danger" [outlined]="true" (onClick)="remove()" data-testid="user-delete" />
               <p-button type="button" label="รีเซ็ตรหัสผ่าน" severity="secondary" [outlined]="true" (onClick)="showReset = true" data-testid="user-reset-password" />
             }
-            <p-button type="submit" label="บันทึก" icon="pi pi-check" [loading]="saving()" data-testid="user-save" />
+            <p-button type="submit" label="บันทึก" icon="ph ph-check" [loading]="saving()" data-testid="user-save" />
               </div>
             </div>
           </p-card>
