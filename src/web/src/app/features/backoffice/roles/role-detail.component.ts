@@ -39,10 +39,10 @@ import { PageHeaderComponent } from '../../../shared/page-header.component';
         gap: 0.85rem;
       }
       .perm-module {
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--color-divider);
         border-radius: 0.65rem;
         padding: 0.7rem 0.8rem;
-        background: #f8fafc;
+        background: color-mix(in srgb, var(--color-bg) 55%, var(--color-surface));
       }
       .perm-module-head {
         display: flex;
@@ -52,9 +52,9 @@ import { PageHeaderComponent } from '../../../shared/page-header.component';
       }
       .perm-module-title {
         font-size: 0.8rem;
-        font-weight: 700;
+        font-weight: 500;
         text-transform: capitalize;
-        color: #334155;
+        color: var(--color-neutral-200);
       }
       .perm-actions {
         display: grid;
@@ -66,7 +66,7 @@ import { PageHeaderComponent } from '../../../shared/page-header.component';
         align-items: center;
         gap: 0.4rem;
         font-size: 0.82rem;
-        color: #475569;
+        color: var(--color-neutral-400);
       }
     `,
   ],
@@ -141,7 +141,7 @@ import { PageHeaderComponent } from '../../../shared/page-header.component';
                   }
                   <p-button type="button" label="ลบ" severity="danger" [outlined]="true" (onClick)="remove()" data-testid="role-delete" />
                 }
-                <p-button type="submit" label="บันทึก" icon="pi pi-check" [loading]="saving()" data-testid="role-save" />
+                <p-button type="submit" label="บันทึก" icon="ph ph-check" [loading]="saving()" data-testid="role-save" />
               </div>
             </div>
           </p-card>

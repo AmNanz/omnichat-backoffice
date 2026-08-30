@@ -1,40 +1,273 @@
 @use 'tailwindcss';
 @import 'primeicons/primeicons.css';
+@import '@phosphor-icons/web/regular';
+@import '@phosphor-icons/web/fill';
 
 @theme {
-  --font-sans: Kanit, sans-serif;
+  --font-sans: Inter, 'Noto Sans Thai', system-ui, sans-serif;
 }
 
+/* ─────────────────────────────────────────────────────────────────────────
+   Fonts — Inter for latin, Noto Sans Thai for Thai. The two are split by
+   unicode-range, so one stack renders both scripts without a manual switch.
+   ───────────────────────────────────────────────────────────────────── */
 @font-face {
-  font-family: 'Kanit';
-  src: url('/fonts/Kanit-Regular.ttf') format('truetype');
+  font-family: 'Inter';
+  font-style: normal;
   font-weight: 400;
-  font-style: normal;
   font-display: swap;
+  src: url('/fonts/inter-400-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 @font-face {
-  font-family: 'Kanit';
-  src: url('/fonts/Kanit-Medium.ttf') format('truetype');
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/inter-400-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
   font-weight: 500;
-  font-style: normal;
   font-display: swap;
+  src: url('/fonts/inter-500-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 @font-face {
-  font-family: 'Kanit';
-  src: url('/fonts/Kanit-SemiBold.ttf') format('truetype');
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/inter-500-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
   font-weight: 600;
-  font-style: normal;
   font-display: swap;
+  src: url('/fonts/inter-600-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 @font-face {
-  font-family: 'Kanit';
-  src: url('/fonts/Kanit-SemiBold.ttf') format('truetype');
-  font-weight: 700;
+  font-family: 'Inter';
   font-style: normal;
+  font-weight: 600;
   font-display: swap;
+  src: url('/fonts/inter-600-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/inter-700-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/inter-700-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Noto Sans Thai';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/noto-sans-thai-400-thai.woff2') format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+
+@font-face {
+  font-family: 'Noto Sans Thai';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/noto-sans-thai-400-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Noto Sans Thai';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/noto-sans-thai-400-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Noto Sans Thai';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/noto-sans-thai-500-thai.woff2') format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+
+@font-face {
+  font-family: 'Noto Sans Thai';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/noto-sans-thai-500-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Noto Sans Thai';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/noto-sans-thai-500-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Noto Sans Thai';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/noto-sans-thai-600-thai.woff2') format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+
+@font-face {
+  font-family: 'Noto Sans Thai';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/noto-sans-thai-600-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Noto Sans Thai';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/noto-sans-thai-600-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Noto Sans Thai';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/noto-sans-thai-700-thai.woff2') format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+
+@font-face {
+  font-family: 'Noto Sans Thai';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/noto-sans-thai-700-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Noto Sans Thai';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/noto-sans-thai-700-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Nocturne design tokens. Every colour, radius, spacing and shadow in the
+   back-office comes from here — see the design system's readme.
+   ───────────────────────────────────────────────────────────────────── */
+:root {
+  --color-bg: #161826;
+  --color-bg-lift: #1b1d2c;
+  --color-surface: #232532;
+  --color-text: #e9e9ed;
+  --color-accent: #9184d9;
+  --color-divider: color-mix(in srgb, #e9e9ed 16%, transparent);
+
+  --color-neutral-100: #f3f5fe;
+  --color-neutral-200: #e4e7f5;
+  --color-neutral-300: #cfd3e5;
+  --color-neutral-400: #b2b6ca;
+  --color-neutral-500: #9397ab;
+  --color-neutral-600: #75798c;
+  --color-neutral-700: #595d6c;
+  --color-neutral-800: #3f424d;
+  --color-neutral-900: #292b31;
+
+  --color-accent-100: #f5f4ff;
+  --color-accent-200: #e7e5fe;
+  --color-accent-300: #d2cefd;
+  --color-accent-400: #b5abfc;
+  --color-accent-500: #968ae0;
+  --color-accent-600: #796cbf;
+  --color-accent-700: #5d5294;
+  --color-accent-800: #423a6a;
+  --color-accent-900: #2b2741;
+
+  /* Status tones — the four states the back-office actually shows. */
+  --tone-good: #5fd3a0;
+  --tone-warn: #e0b055;
+  --tone-bad: #e58a8a;
+  --tone-mute: #9397ab;
+
+  --tag-active-bg: #1f3b30;
+  --tag-active-fg: #b6f0d2;
+  --tag-active-dot: #4ade80;
+  --tag-expired-bg: #3d2528;
+  --tag-expired-fg: #f4c3c3;
+  --tag-expired-dot: #e05a5a;
+  --tag-suspended-bg: #2b2d38;
+  --tag-suspended-fg: #c6cad8;
+  --tag-suspended-dot: #8b90a3;
+  --tag-soon-bg: #3b3323;
+  --tag-soon-fg: #f0dcb0;
+  --tag-soon-dot: #e0b055;
+  --tag-accent-bg: #2e2a44;
+  --tag-accent-fg: #cfc9f5;
+
+  /* Density 0.70× — this system is compact on purpose. */
+  --space-1: 2.8px;
+  --space-2: 5.6px;
+  --space-3: 8.4px;
+  --space-4: 11.2px;
+  --space-6: 16.8px;
+  --space-8: 22.4px;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+
+  --shadow-sm: 0 0 0 1px #3f424d;
+  --shadow-md: 0 0 0 1px #595d6c, 0 6px 18px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 0 0 1px #9397ab, 0 16px 40px rgba(0, 0, 0, 0.65);
+
+  color-scheme: dark;
+}
+
+/* PrimeNG reads these at runtime; pointing them at the tokens above keeps
+   every PrimeNG surface on the Nocturne palette without per-component CSS. */
+:root {
+  --p-content-border-radius: var(--radius-md);
+  --p-anchor-gutter: 4px;
 }
 
 html,
@@ -42,7 +275,7 @@ body,
 app-root {
   height: 100%;
   overflow: hidden;
-  font-family: Kanit, sans-serif;
+  font-family: Inter, 'Noto Sans Thai', system-ui, sans-serif;
   font-weight: 400;
   font-synthesis: none;
 }
@@ -66,29 +299,81 @@ button,
 input,
 textarea,
 select {
-  font-family: Kanit, sans-serif;
+  font-family: Inter, 'Noto Sans Thai', system-ui, sans-serif;
 }
 
 body {
   margin: 0;
-  background: #eef4f8;
-  color: #1c3550;
-  font-size: 1rem;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 15px;
   line-height: 1.55;
 }
 
-.p-button,
-.p-button-label,
-.p-datatable .p-datatable-thead > tr > th {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
 }
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: var(--color-accent-300);
+}
+
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: var(--color-neutral-800);
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-neutral-700);
+  background-clip: content-box;
+}
+
+/* ── page scaffold ────────────────────────────────────────────────────── */
 
 .page {
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
+  gap: var(--space-6);
   min-height: 100%;
-  padding-bottom: 1.35rem;
+  max-width: 1400px;
+  padding-bottom: var(--space-8);
 }
 
 main.content > router-outlet + *,
@@ -111,58 +396,292 @@ app-login {
 .page-toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  align-items: center;
+  gap: var(--space-6);
+  align-items: flex-end;
   justify-content: space-between;
   flex-shrink: 0;
 }
 
-.page-filters {
+/* ── surfaces ─────────────────────────────────────────────────────────── */
+
+.surface-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.surface-pad {
+  padding: var(--space-6) 18px;
+}
+
+/* A card whose header, body and footer are separated by inset rules rather
+   than gaps — the list shell in the design. */
+.panel {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+  flex-direction: column;
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.panel-head {
+  display: flex;
   align-items: center;
-  width: 100%;
-  padding-bottom: 1rem;
-  margin-bottom: 0.25rem;
-  border-bottom: 1px solid #d5e0ea;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  box-shadow: inset 0 -1px 0 var(--color-divider);
 }
 
-.page-filters > input.p-inputtext {
-  flex: 1 1 12rem;
-  min-width: 12rem;
-  width: auto;
+.panel-body {
+  padding: 2px 6px 0;
 }
 
-.page-filters > p-select,
-.page-filters > p-button {
-  flex: 0 0 auto;
+.panel-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: 11px 14px;
+  box-shadow: inset 0 1px 0 var(--color-divider);
+  font-size: 12px;
+  color: var(--color-neutral-500);
 }
 
-.detail-form {
-  display: block;
-  width: 100%;
+.section-label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-neutral-500);
 }
+
+.hr {
+  height: 1px;
+  border: 0;
+  margin: var(--space-4) 0;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--color-divider) 48px,
+    var(--color-divider) calc(100% - 48px),
+    transparent
+  );
+}
+
+/* ── KPI strip ────────────────────────────────────────────────────────── */
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s ease;
+}
+
+.stat-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.stat-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-neutral-500);
+}
+
+.stat-label i {
+  font-size: 14px;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--color-text);
+}
+
+.stat-delta {
+  font-size: 11px;
+}
+
+.tone-good {
+  color: var(--tone-good);
+}
+.tone-warn {
+  color: var(--tone-warn);
+}
+.tone-bad {
+  color: var(--tone-bad);
+}
+.tone-accent {
+  color: var(--color-accent);
+}
+.tone-mute {
+  color: var(--tone-mute);
+}
+
+/* ── quota meters ─────────────────────────────────────────────────────── */
+
+.meter {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-neutral-900);
+  overflow: hidden;
+}
+
+.meter-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--color-accent);
+}
+
+/* ── status chips ─────────────────────────────────────────────────────── */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: var(--tag-suspended-bg);
+  color: var(--tag-suspended-fg);
+  white-space: nowrap;
+}
+
+.chip .dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.chip i {
+  font-size: 12px;
+}
+
+.chip-active {
+  background: var(--tag-active-bg);
+  color: var(--tag-active-fg);
+}
+.chip-active .dot {
+  background: var(--tag-active-dot);
+}
+
+.chip-expired {
+  background: var(--tag-expired-bg);
+  color: var(--tag-expired-fg);
+}
+.chip-expired .dot {
+  background: var(--tag-expired-dot);
+}
+
+.chip-suspended {
+  background: var(--tag-suspended-bg);
+  color: var(--tag-suspended-fg);
+}
+.chip-suspended .dot {
+  background: var(--tag-suspended-dot);
+}
+
+.chip-soon {
+  background: var(--tag-soon-bg);
+  color: var(--tag-soon-fg);
+}
+.chip-soon .dot {
+  background: var(--tag-soon-dot);
+}
+
+.chip-accent {
+  background: var(--tag-accent-bg);
+  color: var(--tag-accent-fg);
+}
+
+/* Avatar-ish square initials used in list lead cells and timelines. */
+.initials {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: var(--color-neutral-900);
+  color: var(--color-neutral-300);
+  font-size: 11px;
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1px var(--color-divider);
+}
+
+.initials-round {
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 10px;
+}
+
+.cell-lead {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.cell-lead-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+  min-width: 0;
+}
+
+.cell-lead-text strong {
+  font-weight: 500;
+}
+
+.cell-lead-text span {
+  font-size: 11px;
+  color: var(--color-neutral-500);
+}
+
+.cell-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  color: var(--color-neutral-400);
+}
+
+/* ── forms ────────────────────────────────────────────────────────────── */
 
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.15rem 1.5rem;
+  gap: 14px 18px;
   width: 100%;
 }
 
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: 5px;
   min-width: 0;
 }
 
 .form-field label {
-  font-size: 0.95rem;
-  font-weight: 500;
-  letter-spacing: 0;
-  color: #1c3550;
+  font-size: 12px;
+  font-weight: 400;
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
 }
 
 .form-field input.p-inputtext,
@@ -173,14 +692,14 @@ app-login {
 .form-compact {
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
+  gap: var(--space-6);
   max-width: 36rem;
 }
 
 .form-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem 1.25rem;
+  gap: 14px 18px;
   align-items: flex-start;
 }
 
@@ -208,31 +727,32 @@ app-login {
 .form-static-value {
   display: inline-flex;
   align-items: center;
-  min-height: 2.5rem;
-  padding: 0 0.85rem;
-  border: 1px solid #d5e0ea;
-  border-radius: 0.7rem;
-  background: #f8fbfd;
-  color: #3d556b;
-  font-size: 0.95rem;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 10px;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-neutral-400);
+  font-size: 14px;
 }
 
 .form-section-title {
   grid-column: 1 / -1;
-  margin: 0.35rem 0 0;
-  padding-bottom: 0.45rem;
-  border-bottom: 1px solid #d5e0ea;
-  font-size: 0.85rem;
-  font-weight: 500;
-  letter-spacing: 0;
-  text-transform: none;
-  color: #7a93a8;
+  margin: var(--space-3) 0 0;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-neutral-500);
 }
 
 .form-hint {
   margin: 0;
-  color: #5b7388;
-  font-size: 0.85rem;
+  color: var(--color-neutral-500);
+  font-size: 12px;
 }
 
 .form-actions {
@@ -240,17 +760,17 @@ app-login {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: var(--space-3);
   grid-column: 1 / -1;
-  margin-top: 0.35rem;
-  padding-top: 1.15rem;
-  border-top: 1px solid #d5e0ea;
+  margin-top: var(--space-3);
+  padding-top: var(--space-6);
+  box-shadow: inset 0 1px 0 var(--color-divider);
 }
 
 .form-actions-right {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: var(--space-3);
   margin-left: auto;
 }
 
@@ -260,108 +780,97 @@ app-login {
   }
 }
 
+/* ── filters ──────────────────────────────────────────────────────────── */
+
+.page-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+  width: 100%;
+}
+
+.page-filters > input.p-inputtext {
+  flex: 1 1 12rem;
+  min-width: 12rem;
+  width: auto;
+}
+
+.page-filters > p-select,
+.page-filters > p-button {
+  flex: 0 0 auto;
+}
+
+.search-field {
+  position: relative;
+  flex: 1 1 240px;
+  min-width: 200px;
+}
+
+.search-field > i {
+  position: absolute;
+  left: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px;
+  color: var(--color-neutral-500);
+  pointer-events: none;
+}
+
+.search-field input.p-inputtext {
+  width: 100%;
+  padding-left: 30px;
+  background: color-mix(in srgb, var(--color-bg) 60%, var(--color-surface));
+}
+
+/* ── state messages ───────────────────────────────────────────────────── */
+
 .state-message {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  padding: 1.15rem 1rem;
-  border-radius: 0.75rem;
-  background: #f8fbfd;
-  border: 1px dashed #c9ddea;
-  color: #7a93a8;
+  gap: var(--space-3);
+  padding: var(--space-8) var(--space-6);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-bg) 55%, var(--color-surface));
+  border: 1px dashed var(--color-neutral-800);
+  color: var(--color-neutral-500);
 }
 
 .state-message.error {
   border-style: solid;
-  border-color: #fecaca;
-  background: #fef2f2;
-  color: #b91c1c;
+  border-color: color-mix(in srgb, var(--tone-bad) 40%, transparent);
+  background: var(--tag-expired-bg);
+  color: var(--tag-expired-fg);
 }
 
 .clickable-row {
   cursor: pointer;
 }
 
-.p-datatable .col-fit {
-  width: 1%;
-  white-space: nowrap;
-}
+/* ── PrimeNG overrides ────────────────────────────────────────────────── */
 
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-}
-
-.stat-card {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  padding: 0.15rem 0;
-}
-
-.stat-icon {
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 0.8rem;
-  display: grid;
-  place-items: center;
-  font-size: 1.05rem;
-  flex-shrink: 0;
-}
-
-.stat-icon.blue {
-  background: #d7e8f4;
-  color: #2f5f86;
-}
-.stat-icon.emerald {
-  background: #d1fae5;
-  color: #047857;
-}
-.stat-icon.amber {
-  background: #fef3c7;
-  color: #b45309;
-}
-.stat-icon.rose {
-  background: #ffe4e6;
-  color: #e11d48;
-}
-.stat-icon.violet {
-  background: #ede9fe;
-  color: #6d28d9;
-}
-.stat-icon.slate {
-  background: #e4eef5;
-  color: #385a73;
-}
-
-.stat-label {
-  font-size: 0.9rem;
-  color: #7a93a8;
-}
-
-.stat-value {
-  font-size: 1.45rem;
-  font-weight: 600;
-  color: #1c3550;
-  line-height: 1.2;
-}
-
-.p-datatable .p-datatable-tbody > tr:hover {
-  background: #f3f8fb;
-}
-
-.p-datatable .p-datatable-thead > tr > th,
-.p-datatable .p-datatable-tbody > tr > td,
-.p-paginator,
-.p-select-label,
-.p-button-label {
-  font-size: 1rem;
+.p-card {
+  width: 100%;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 0;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .page p-card {
   display: block;
   width: 100%;
+}
+
+.page .p-card .p-card-body,
+.page .p-card .p-card-content {
+  padding: var(--space-6) 18px;
+}
+
+.p-card .p-card-title {
+  font-size: 15px;
+  font-weight: 500;
 }
 
 .page .detail-form-fit,
@@ -374,15 +883,370 @@ app-login {
   max-width: none;
 }
 
-.p-card {
+.detail-form {
+  display: block;
   width: 100%;
-  box-shadow: 0 10px 28px rgba(28, 53, 80, 0.06);
-  border: 1px solid #d5e0ea;
-  border-radius: 1.15rem;
 }
 
-.page .p-card .p-card-body,
-.page .p-card .p-card-content {
-  padding: 1.5rem 1.6rem;
+/* Buttons — the primary is an accent outline, never a fill. */
+.p-button {
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: var(--radius-md);
 }
 
+.p-button:not(.p-button-text):not(.p-button-link):not(.p-button-outlined) {
+  background: transparent;
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.p-button:not(.p-button-text):not(.p-button-link):not(.p-button-outlined):hover {
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.p-button:not(.p-button-text):not(.p-button-link):not(.p-button-outlined):active {
+  background: color-mix(in srgb, var(--color-accent) 22%, transparent);
+}
+
+.p-button.p-button-secondary:not(.p-button-text):not(.p-button-link) {
+  background: transparent;
+  border-color: var(--color-divider);
+  color: var(--color-text);
+}
+
+.p-button.p-button-secondary:not(.p-button-text):not(.p-button-link):hover {
+  background: color-mix(in srgb, var(--color-text) 7%, transparent);
+  border-color: var(--color-divider);
+  color: var(--color-text);
+}
+
+.p-button.p-button-danger:not(.p-button-text):not(.p-button-link) {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--tone-bad) 40%, transparent);
+  color: var(--tone-bad);
+}
+
+.p-button.p-button-danger:not(.p-button-text):not(.p-button-link):hover {
+  background: color-mix(in srgb, var(--tone-bad) 12%, transparent);
+  border-color: var(--tone-bad);
+  color: var(--tone-bad);
+}
+
+.p-button.p-button-text {
+  color: var(--color-neutral-400);
+}
+
+.p-button.p-button-text:hover {
+  background: color-mix(in srgb, var(--color-text) 7%, transparent);
+  color: var(--color-text);
+}
+
+/* Inputs */
+.p-inputtext,
+.p-select,
+.p-textarea,
+.p-datepicker-input,
+.p-inputnumber-input,
+.p-password-input {
+  min-height: 36px;
+  padding: 6px 10px;
+  font-size: 14px;
+  color: var(--color-text);
+  caret-color: var(--color-accent);
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+}
+
+.p-inputtext:enabled:hover,
+.p-select:not(.p-disabled):hover,
+.p-textarea:enabled:hover {
+  border-color: color-mix(in srgb, var(--color-text) 45%, transparent);
+}
+
+.p-inputtext:enabled:focus,
+.p-select:not(.p-disabled).p-focus,
+.p-textarea:enabled:focus {
+  border-color: var(--color-accent);
+  box-shadow: none;
+  outline: 0;
+}
+
+.p-inputtext::placeholder {
+  color: var(--color-neutral-600);
+}
+
+.p-select-label {
+  padding: 0;
+  color: var(--color-text);
+}
+
+.p-select-label.p-placeholder {
+  color: var(--color-neutral-600);
+}
+
+.p-select-dropdown {
+  color: var(--color-neutral-500);
+}
+
+.p-select-overlay,
+.p-datepicker-panel,
+.p-popover,
+.p-menu,
+.p-multiselect-overlay,
+.p-autocomplete-overlay {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.p-select-option,
+.p-menu-item-link {
+  color: var(--color-neutral-300);
+  font-size: 14px;
+}
+
+.p-select-option:not(.p-select-option-selected):not(.p-disabled):hover,
+.p-menu-item-link:hover {
+  background: color-mix(in srgb, var(--color-text) 7%, transparent);
+  color: var(--color-text);
+}
+
+.p-select-option.p-select-option-selected {
+  background: color-mix(in srgb, var(--color-accent) 16%, transparent);
+  color: var(--color-accent-200);
+}
+
+/* Tables */
+.p-datatable {
+  font-size: 14px;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  background: transparent;
+  border: 0;
+  padding: 8px var(--space-2);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+}
+
+/* Row rules are painted on the row, so the end-fade spans the row, not each
+   cell — a Nocturne signature. */
+.p-datatable .p-datatable-thead > tr {
+  background:
+    linear-gradient(
+        to right,
+        transparent,
+        var(--color-divider) 48px,
+        var(--color-divider) calc(100% - 48px),
+        transparent
+      )
+      no-repeat bottom / 100% 1px;
+}
+
+.p-datatable .p-datatable-tbody > tr {
+  background:
+    linear-gradient(
+        to right,
+        transparent,
+        color-mix(in srgb, var(--color-text) 8%, transparent) 48px,
+        color-mix(in srgb, var(--color-text) 8%, transparent) calc(100% - 48px),
+        transparent
+      )
+      no-repeat bottom / 100% 1px;
+  color: var(--color-neutral-300);
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+  border: 0;
+  padding: 10px var(--space-2);
+}
+
+.p-datatable .p-datatable-tbody > tr:hover {
+  background:
+    linear-gradient(
+        color-mix(in srgb, var(--color-text) 4%, transparent),
+        color-mix(in srgb, var(--color-text) 4%, transparent)
+      )
+      no-repeat 0 0 / 100% 100%,
+    linear-gradient(
+        to right,
+        transparent,
+        color-mix(in srgb, var(--color-text) 8%, transparent) 48px,
+        color-mix(in srgb, var(--color-text) 8%, transparent) calc(100% - 48px),
+        transparent
+      )
+      no-repeat bottom / 100% 1px;
+  color: var(--color-text);
+}
+
+.p-datatable .col-fit {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.p-paginator {
+  background: transparent;
+  border: 0;
+  padding: 11px 14px;
+  color: var(--color-neutral-500);
+  font-size: 12px;
+}
+
+.p-paginator .p-paginator-page,
+.p-paginator .p-paginator-first,
+.p-paginator .p-paginator-prev,
+.p-paginator .p-paginator-next,
+.p-paginator .p-paginator-last {
+  min-width: 30px;
+  height: 30px;
+  border-radius: var(--radius-md);
+  color: var(--color-neutral-400);
+}
+
+.p-paginator .p-paginator-page.p-paginator-page-selected {
+  background: transparent;
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+}
+
+.p-paginator .p-paginator-page:not(.p-paginator-page-selected):hover {
+  background: color-mix(in srgb, var(--color-text) 7%, transparent);
+  color: var(--color-text);
+}
+
+/* Dialogs, toasts, tooltips */
+.p-dialog {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 0;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.p-dialog-header,
+.p-dialog-footer {
+  background: transparent;
+  color: var(--color-text);
+  border: 0;
+}
+
+.p-dialog-title {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.p-dialog-mask {
+  background: color-mix(in srgb, #0d0e18 62%, transparent);
+  backdrop-filter: blur(2px);
+}
+
+.p-toast-message {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.p-tooltip .p-tooltip-text {
+  background: var(--color-neutral-900);
+  color: var(--color-text);
+  font-size: 12px;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+}
+
+/* Tags — PrimeNG severities remapped onto the Nocturne status palette. */
+.p-tag {
+  font-size: 11px;
+  font-weight: 400;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: var(--tag-suspended-bg);
+  color: var(--tag-suspended-fg);
+}
+
+.p-tag.p-tag-success {
+  background: var(--tag-active-bg);
+  color: var(--tag-active-fg);
+}
+
+.p-tag.p-tag-danger {
+  background: var(--tag-expired-bg);
+  color: var(--tag-expired-fg);
+}
+
+.p-tag.p-tag-warn {
+  background: var(--tag-soon-bg);
+  color: var(--tag-soon-fg);
+}
+
+.p-tag.p-tag-info {
+  background: var(--tag-accent-bg);
+  color: var(--tag-accent-fg);
+}
+
+.p-tag.p-tag-secondary {
+  background: var(--tag-suspended-bg);
+  color: var(--tag-suspended-fg);
+}
+
+/* Misc controls */
+.p-progressspinner-circle {
+  stroke: var(--color-accent) !important;
+}
+
+.p-checkbox-box,
+.p-radiobutton-box {
+  background: var(--color-surface);
+  border-color: var(--color-divider);
+}
+
+.p-checkbox-checked .p-checkbox-box,
+.p-radiobutton-checked .p-radiobutton-box {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.p-toggleswitch-slider {
+  background: var(--color-neutral-800);
+}
+
+.p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-slider {
+  background: var(--color-accent);
+}
+
+.p-tabs-tablist,
+.p-tablist-tab-list {
+  background: transparent;
+  border: 0;
+  box-shadow: inset 0 -1px 0 var(--color-divider);
+}
+
+.p-tab {
+  background: transparent;
+  border: 0;
+  padding: 7px 12px 10px;
+  font-size: 13px;
+  color: var(--color-neutral-500);
+}
+
+.p-tab.p-tab-active {
+  color: var(--color-accent);
+  box-shadow: inset 0 -2px 0 var(--color-accent);
+}
+
+.p-confirmdialog .p-confirmdialog-message {
+  color: var(--color-neutral-300);
+  font-size: 14px;
+}

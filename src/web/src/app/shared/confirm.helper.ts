@@ -14,7 +14,7 @@ export class ConfirmHelper {
     this.confirmation.confirm({
       message: options.message,
       header: options.header ?? 'ยืนยัน',
-      icon: 'pi pi-exclamation-triangle',
+      icon: 'ph ph-warning',
       accept: options.accept,
     });
   }

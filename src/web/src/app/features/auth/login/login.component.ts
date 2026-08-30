@@ -17,30 +17,32 @@ import { apiErrorMessage } from '../../../services/http-utils';
   template: `
     <div class="login-shell">
       <section class="login-hero">
-        <div class="login-brand-card" aria-hidden="true">
-          <svg class="login-brand-mark" viewBox="0 0 72 72" fill="none">
-            <path
-              d="M18 46c0-8.8 7.2-16 16-16h4c8.8 0 16 7.2 16 16"
-              stroke="currentColor"
-              stroke-width="2.4"
-              stroke-linecap="round"
-            />
-            <circle cx="26" cy="24" r="6" stroke="currentColor" stroke-width="2.4" />
-            <circle cx="46" cy="24" r="6" stroke="currentColor" stroke-width="2.4" />
-            <rect x="31" y="32" width="10" height="10" rx="2" stroke="currentColor" stroke-width="2.4" />
-          </svg>
-          <div class="login-brand-name">OMNI CHAT</div>
+        <div class="login-brand">
+          <img src="brand/mindchat-wordmark.png" alt="mindchat" />
+          <span>Back-office</span>
         </div>
-        <span class="login-pill">OMNICHAT</span>
-        <h1>ระบบจัดการหลังบ้าน</h1>
-        <p class="login-hero-title">OmniChat</p>
+
+        <div class="login-hero-body">
+          <div class="login-kicker">ระบบจัดการหลังบ้าน</div>
+          <h1>จัดการผู้เช่า แพ็กเกจ<br />และการเรียกเก็บเงิน<br />ได้จากที่เดียว</h1>
+          <p>
+            โปรไฟล์ บริษัท ผู้ใช้ โควตา ใบแจ้งหนี้ และบันทึกการใช้งาน —
+            ครบในแผงควบคุมเดียว
+          </p>
+          <ul class="login-points">
+            <li><i class="ph ph-identification-card"></i><span>โปรไฟล์และบริษัทในผังเดียว</span></li>
+            <li><i class="ph ph-gauge"></i><span>โควตาและการใช้งานแบบเรียลไทม์</span></li>
+            <li><i class="ph ph-clock-counter-clockwise"></i><span>บันทึกทุกการเปลี่ยนแปลง</span></li>
+          </ul>
+        </div>
+
+        <div class="login-foot">mindchat · ใช้งานภายในองค์กรเท่านั้น</div>
       </section>
 
       <section class="login-panel">
         <div class="login-card">
-          <span class="login-pill">ACCOUNT ACCESS</span>
           <h2>เข้าสู่ระบบ</h2>
-          <p class="login-subtitle">ใช้อีเมลที่ลงทะเบียนไว้</p>
+          <p class="login-subtitle">ใช้อีเมลที่ลงทะเบียนไว้กับทีมผู้ดูแล</p>
 
           <form class="login-form" [formGroup]="form" (ngSubmit)="submit()">
             <div class="form-field">
@@ -59,6 +61,7 @@ import { apiErrorMessage } from '../../../services/http-utils';
                 <small class="login-error">กรุณากรอกอีเมล</small>
               }
             </div>
+
             <div class="form-field">
               <label for="password">รหัสผ่าน</label>
               <p-password
@@ -77,13 +80,18 @@ import { apiErrorMessage } from '../../../services/http-utils';
                 <small class="login-error">กรุณากรอกรหัสผ่าน</small>
               }
             </div>
+
             <p-button
               type="submit"
               label="เข้าสู่ระบบ"
+              icon="ph ph-arrow-right"
+              iconPos="right"
               styleClass="w-full login-submit"
               [loading]="loading()"
               data-testid="login-submit"
             />
+
+            <p class="login-note">การเข้าสู่ระบบทั้งหมดถูกบันทึกไว้ในบันทึกการใช้งาน</p>
           </form>
         </div>
       </section>
@@ -98,172 +106,180 @@ import { apiErrorMessage } from '../../../services/http-utils';
     .login-shell {
       min-height: 100%;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(22rem, 28rem);
-      align-items: center;
-      gap: 3rem;
-      padding: 3.5rem 6vw 3.5rem 8vw;
-      background:
-        radial-gradient(ellipse 70% 80% at 58% 48%, #ffffff 0%, transparent 55%),
-        linear-gradient(115deg, #d7e6f2 0%, #eaf2f8 42%, #f7fafc 100%);
+      grid-template-columns: minmax(0, 1.1fr) minmax(380px, 0.9fr);
+      background: var(--color-bg);
+      color: var(--color-text);
     }
 
+    /* The hero is the one place the accent runs as a field — a soft bloom,
+       not a flood. */
     .login-hero {
-      max-width: 28rem;
-    }
-
-    .login-brand-card {
-      width: 7.25rem;
-      height: 7.25rem;
-      margin-bottom: 1.35rem;
+      position: relative;
+      overflow: hidden;
+      padding: 56px 56px 44px;
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
+      background:
+        radial-gradient(
+          ellipse 80% 70% at 15% 10%,
+          color-mix(in srgb, var(--color-accent) 22%, transparent),
+          transparent 60%
+        ),
+        linear-gradient(160deg, #1c1f31 0%, #141624 70%);
+    }
+
+    .login-brand {
+      display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 0.35rem;
-      background: #fff;
-      border-radius: 1.15rem;
-      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
-      color: #1e293b;
+      gap: 12px;
     }
 
-    .login-brand-mark {
-      width: 3.4rem;
-      height: 3.4rem;
+    .login-brand img {
+      height: 26px;
+      width: auto;
+      object-fit: contain;
     }
 
-    .login-brand-name {
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      line-height: 1;
+    .login-brand span {
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-neutral-500);
+      padding-left: 12px;
+      box-shadow: inset 1px 0 0 var(--color-divider);
     }
 
-    .login-pill {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.28rem 0.75rem;
-      border-radius: 999px;
-      background: #d7e8f4;
-      color: #2f5f86;
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
+    .login-hero-body {
+      max-width: 520px;
     }
 
-    .login-hero h1,
-    .login-hero-title {
-      margin: 0;
-      color: #1c3550;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      line-height: 1.15;
+    .login-kicker {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-accent-300);
+      margin-bottom: 14px;
     }
 
     .login-hero h1 {
-      margin-top: 0.9rem;
-      font-size: clamp(2rem, 3.4vw, 2.75rem);
+      margin: 0;
+      font-size: 38px;
+      font-weight: 500;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
     }
 
-    .login-hero-title {
-      margin-top: 0.15rem;
-      font-size: clamp(2rem, 3.4vw, 2.75rem);
+    .login-hero p {
+      margin: 16px 0 0;
+      font-size: 14px;
+      color: var(--color-neutral-400);
+      max-width: 420px;
+    }
+
+    .login-points {
+      list-style: none;
+      margin: 28px 0 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .login-points li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--color-neutral-300);
+    }
+
+    .login-points i {
+      font-size: 17px;
+      color: var(--color-accent);
+      width: 20px;
+      text-align: center;
+    }
+
+    .login-foot {
+      font-size: 11px;
+      color: var(--color-neutral-600);
     }
 
     .login-panel {
       display: flex;
-      justify-content: flex-end;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 44px;
+      box-shadow: inset 1px 0 0 var(--color-divider);
     }
 
     .login-card {
       width: 100%;
-      max-width: 26rem;
-      padding: 1.85rem 1.75rem 1.7rem;
-      background: #fff;
-      border-radius: 1.15rem;
-      box-shadow: 0 18px 50px rgba(28, 53, 80, 0.1);
+      max-width: 360px;
     }
 
     .login-card h2 {
-      margin: 0.85rem 0 0.35rem;
-      color: #1c3550;
-      font-size: 1.85rem;
-      font-weight: 700;
-      line-height: 1.2;
+      margin: 0;
+      font-size: 24px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
     }
 
     .login-subtitle {
-      margin: 0 0 1.35rem;
-      color: #5b738a;
-      font-size: 0.95rem;
+      margin: 6px 0 24px;
+      font-size: 13px;
+      color: var(--color-neutral-500);
     }
 
     .login-form {
       display: flex;
       flex-direction: column;
-      gap: 1.05rem;
+      gap: 14px;
     }
 
-    .login-form .form-field label {
-      color: #1c3550;
-      font-weight: 600;
+    .login-form ::ng-deep .p-inputtext {
+      min-height: 40px;
     }
 
     .login-error {
-      color: #dc2626;
-      font-size: 0.82rem;
+      color: var(--tone-bad);
+      font-size: 12px;
     }
 
-    :host ::ng-deep {
-      .login-form .p-inputtext,
-      .login-form .p-password {
-        width: 100%;
-      }
+    .login-form ::ng-deep .login-input-invalid {
+      border-color: var(--tone-bad);
+    }
 
-      .login-form .p-inputtext {
-        border-radius: 0.7rem;
-        border-color: #d5e0ea;
-        padding: 0.75rem 0.9rem;
-      }
+    .login-form ::ng-deep .login-submit .p-button {
+      min-height: 40px;
+      margin-top: 4px;
+    }
 
-      .login-form .p-inputtext::placeholder {
-        color: #94a3b8;
-      }
-
-      .login-form .login-input-invalid,
-      .login-form .p-inputtext.login-input-invalid {
-        border-color: #f3b4b4;
-      }
-
-      .login-submit.p-button {
-        margin-top: 0.35rem;
-        height: 2.85rem;
-        border: 0;
-        border-radius: 0.7rem;
-        background: #6699bb;
-        font-weight: 600;
-      }
-
-      .login-submit.p-button:not(:disabled):hover {
-        background: #5b8aab;
-      }
+    .login-note {
+      margin: 6px 0 0;
+      text-align: center;
+      font-size: 11px;
+      color: var(--color-neutral-600);
     }
 
     @media (max-width: 960px) {
       .login-shell {
         grid-template-columns: 1fr;
-        justify-items: center;
-        gap: 2rem;
-        padding: 2rem 1.25rem 2.5rem;
       }
 
-      .login-hero,
-      .login-panel {
-        width: 100%;
-        max-width: 26rem;
+      .login-hero {
+        padding: 32px 24px;
+        gap: 24px;
+      }
+
+      .login-hero h1 {
+        font-size: 28px;
       }
 
       .login-panel {
-        justify-content: center;
+        padding: 28px 24px 40px;
+        box-shadow: none;
       }
     }
   `,

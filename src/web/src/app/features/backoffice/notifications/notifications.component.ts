@@ -1,7 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -15,15 +14,16 @@ import { EmptyStateComponent } from '../../../shared/empty-state.component';
 @Component({
   selector: 'app-notifications',
   standalone: true,
-  imports: [DatePipe, ButtonModule, CardModule, TableModule, TagModule, ProgressSpinnerModule, PageHeaderComponent, EmptyStateComponent],
+  imports: [DatePipe, ButtonModule, TableModule, TagModule, ProgressSpinnerModule, PageHeaderComponent, EmptyStateComponent],
   template: `
     <div class="page">
       <app-page-header title="การแจ้งเตือน" subtitle="การแจ้งเตือนของคุณ" />
-      <p-card>
+      <div class="panel">
       @if (loading()) { <div class="flex justify-center py-8"><p-progressSpinner /></div> }
-      @else if (error()) { <app-empty-state [message]="error()!" variant="error" /> }
-      @else if (!items().length) { <app-empty-state message="ไม่มีการแจ้งเตือน" /> }
+      @else if (error()) { <div class="p-3"><app-empty-state [message]="error()!" variant="error" /></div> }
+      @else if (!items().length) { <div class="p-3"><app-empty-state message="ไม่มีการแจ้งเตือน" /></div> }
       @else {
+        <div class="panel-body">
         <p-table [value]="items()" [paginator]="true" [rows]="limit" [totalRecords]="total()" [lazy]="true" (onPage)="onPage($event)">
           <ng-template pTemplate="header"><tr><th>หัวข้อ</th><th>ข้อความ</th><th class="col-fit">สถานะ</th><th>สร้างเมื่อ</th><th class="col-fit">จัดการ</th></tr></ng-template>
           <ng-template pTemplate="body" let-row>
@@ -39,8 +39,9 @@ import { EmptyStateComponent } from '../../../shared/empty-state.component';
             </tr>
           </ng-template>
         </p-table>
+        </div>
       }
-      </p-card>
+      </div>
     </div>
   `,
 })

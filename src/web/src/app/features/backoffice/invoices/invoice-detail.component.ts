@@ -64,7 +64,7 @@ import { EmptyStateComponent } from '../../../shared/empty-state.component';
             @if (!isNew) {
               <p-button type="button" label="ยกเลิกใบแจ้งหนี้" severity="danger" [outlined]="true" (onClick)="cancelInvoice()" />
             }
-            <p-button type="submit" label="บันทึก" icon="pi pi-check" [loading]="saving()" />
+            <p-button type="submit" label="บันทึก" icon="ph ph-check" [loading]="saving()" />
               </div>
             </div>
           </p-card>
