@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, inject, signal } from '@angular/core';
+import { Component, HostListener, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
@@ -550,29 +550,81 @@ const NAV_COLLAPSED_KEY = 'backoffice.nav.collapsed';
         color: var(--color-neutral-600);
       }
 
+      /* Breadcrumbs are a single line — they truncate rather than stack. */
+      .crumbs > * {
+        flex: none;
+      }
+
+      .crumbs .leaf {
+        flex: 0 1 auto;
+      }
+
       @media (max-width: 960px) {
+        /* Belt and braces: the rail is already 64px because the narrow signal
+           collapses it; this holds the column even if that has not run yet. */
         .layout {
           grid-template-columns: 64px minmax(0, 1fr);
         }
+
         .content {
           padding: 14px;
         }
+
+        .topbar {
+          gap: 8px;
+          padding: 0 10px;
+        }
+
+        /* Only the current page survives in the crumb trail. */
+        .crumbs .root,
+        .crumbs .sep-root,
+        .crumbs i.ph-house {
+          display: none;
+        }
+
+        .crumbs .section {
+          color: var(--color-text);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
         .search-trigger {
           width: auto;
+          flex: none;
+          padding: 0 8px;
         }
+
         .search-trigger span.hint,
+        .search-trigger .kbd,
         .user-meta {
           display: none;
+        }
+
+        .topbar-right {
+          gap: 2px;
+        }
+
+        .vrule {
+          display: none;
+        }
+
+        .user-chip {
+          padding: 3px;
+        }
+
+        .palette-backdrop {
+          padding-top: 56px;
         }
       }
     `,
   ],
   template: `
-    <div class="layout" [style.--nav-width]="navOpen() ? '236px' : '64px'">
+    <div class="layout" [style.--nav-width]="navExpanded() ? '236px' : '64px'">
       <aside class="sidebar">
         <div class="brand">
           <img class="brand-mark" src="brand/mindchat-mark.png" alt="mindchat" />
-          @if (navOpen()) {
+          @if (navExpanded()) {
             <div class="brand-text">
               <img src="brand/mindchat-wordmark.png" alt="mindchat" />
               <span>Back-office</span>
@@ -583,7 +635,7 @@ const NAV_COLLAPSED_KEY = 'backoffice.nav.collapsed';
         <nav class="nav">
           @for (group of navGroups; track group.label) {
             <div class="nav-group">
-              @if (navOpen()) {
+              @if (navExpanded()) {
                 <div class="nav-group-label">{{ group.label }}</div>
               }
               @for (item of group.items; track item.route) {
@@ -594,10 +646,10 @@ const NAV_COLLAPSED_KEY = 'backoffice.nav.collapsed';
                   [attr.data-testid]="navTestId(item.route)"
                 >
                   <i [class]="item.icon"></i>
-                  @if (navOpen()) {
+                  @if (navExpanded()) {
                     <span class="label">{{ item.label }}</span>
                   }
-                  @if (navOpen() && item.badge === 'invoices' && summary.pendingInvoices() > 0) {
+                  @if (navExpanded() && item.badge === 'invoices' && summary.pendingInvoices() > 0) {
                     <span class="nav-badge">{{ summary.pendingInvoices() }}</span>
                   }
                 </a>
@@ -606,27 +658,32 @@ const NAV_COLLAPSED_KEY = 'backoffice.nav.collapsed';
           }
         </nav>
 
-        <div class="nav-foot">
-          <button
-            type="button"
-            class="chrome-btn block"
-            [style.justify-content]="navOpen() ? 'flex-start' : 'center'"
-            (click)="toggleNav()"
-            [attr.aria-label]="navOpen() ? 'ย่อเมนู' : 'ขยายเมนู'"
-          >
-            <i [class]="navOpen() ? 'ph ph-sidebar-simple' : 'ph ph-sidebar'" style="font-size: 16px"></i>
-            @if (navOpen()) {
-              <span>ย่อเมนู</span>
-            }
-          </button>
-        </div>
+        @if (!narrowScreen()) {
+          <div class="nav-foot">
+            <button
+              type="button"
+              class="chrome-btn block"
+              [style.justify-content]="navExpanded() ? 'flex-start' : 'center'"
+              (click)="toggleNav()"
+              [attr.aria-label]="navExpanded() ? 'ย่อเมนู' : 'ขยายเมนู'"
+            >
+              <i
+                [class]="navExpanded() ? 'ph ph-sidebar-simple' : 'ph ph-sidebar'"
+                style="font-size: 16px"
+              ></i>
+              @if (navExpanded()) {
+                <span>ย่อเมนู</span>
+              }
+            </button>
+          </div>
+        }
       </aside>
 
       <header class="topbar">
         <div class="crumbs">
           <i class="ph ph-house"></i>
-          <span>ระบบจัดการ</span>
-          <i class="ph ph-caret-right sep"></i>
+          <span class="root">ระบบจัดการ</span>
+          <i class="ph ph-caret-right sep sep-root"></i>
           <span class="section">{{ crumbSection() }}</span>
           @if (crumbLeaf()) {
             <i class="ph ph-caret-right sep"></i>
@@ -735,7 +792,16 @@ export class BackofficeLayoutComponent implements OnInit {
   private readonly profiles = inject(ProfilesService);
   private readonly users = inject(UsersService);
 
+  /** The user's own preference, remembered across sessions. */
   readonly navOpen = signal(this.readNavPreference());
+  /** True while the viewport is too narrow for the labelled rail. */
+  private readonly narrow = signal(false);
+  /**
+   * What the template actually renders. On a narrow screen the rail is always
+   * the 64px icon strip — the labels are dropped from the DOM rather than
+   * squeezed, which is what made them wrap a character per line.
+   */
+  readonly navExpanded = computed(() => this.navOpen() && !this.narrow());
   readonly searchOpen = signal(false);
   readonly searching = signal(false);
   readonly searchGroups = signal<SearchGroup[]>([]);
@@ -790,6 +856,7 @@ export class BackofficeLayoutComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    this.watchViewport();
     this.summary.load().subscribe();
     this.updateCrumbs(this.router.url);
     this.router.events
@@ -815,6 +882,11 @@ export class BackofficeLayoutComponent implements OnInit {
       '/backoffice/subscriptions': 'nav-subscriptions',
     };
     return ids[route] ?? null;
+  }
+
+  /** Exposed for the template; the signal itself stays private. */
+  narrowScreen(): boolean {
+    return this.narrow();
   }
 
   toggleNav(): void {
@@ -958,6 +1030,19 @@ export class BackofficeLayoutComponent implements OnInit {
     // A trailing id means a detail screen; its own title fills the leaf in.
     const leaf = index >= 0 ? segments[index + 2] : undefined;
     this.crumbLeaf.set(leaf ? (leaf === 'new' ? 'สร้างใหม่' : 'รายละเอียด') : '');
+  }
+
+  /**
+   * Below this width the rail has no room for labels. Kept in step with the
+   * `@media (max-width: 960px)` block in this component's styles.
+   */
+  private watchViewport(): void {
+    if (typeof window === 'undefined' || !window.matchMedia) {
+      return;
+    }
+    const query = window.matchMedia('(max-width: 960px)');
+    this.narrow.set(query.matches);
+    query.addEventListener('change', (event) => this.narrow.set(event.matches));
   }
 
   private readNavPreference(): boolean {
