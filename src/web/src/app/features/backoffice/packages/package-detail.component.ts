@@ -63,7 +63,7 @@ import { EmptyStateComponent } from '../../../shared/empty-state.component';
             <div class="form-actions">
               <p-button type="button" label="ย้อนกลับ" severity="secondary" [outlined]="true" (onClick)="back()" />
               <div class="form-actions-right">
-                <p-button type="submit" label="บันทึก" icon="pi pi-check" [loading]="saving()" data-testid="package-save" />
+                <p-button type="submit" label="บันทึก" icon="ph ph-check" [loading]="saving()" data-testid="package-save" />
               </div>
             </div>
           </p-card>

@@ -3,7 +3,6 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
@@ -21,15 +20,18 @@ import { StatusTagComponent } from '../../../shared/status-tag.component';
 @Component({
   selector: 'app-invoices-list',
   standalone: true,
-  imports: [DatePipe, FormsModule, ButtonModule, CardModule, InputTextModule, SelectModule, TableModule, ProgressSpinnerModule, PageHeaderComponent, EmptyStateComponent, StatusTagComponent],
+  imports: [DatePipe, FormsModule, ButtonModule, InputTextModule, SelectModule, TableModule, ProgressSpinnerModule, PageHeaderComponent, EmptyStateComponent, StatusTagComponent],
   template: `
     <div class="page">
       <app-page-header title="ใบแจ้งหนี้" subtitle="ใบแจ้งหนี้การเรียกเก็บเงิน">
-        <p-button label="เพิ่มใบแจ้งหนี้" icon="pi pi-plus" (onClick)="create()" />
+        <p-button label="เพิ่มใบแจ้งหนี้" icon="ph ph-plus" (onClick)="create()" />
       </app-page-header>
-      <p-card>
-      <div class="page-filters">
-        <input pInputText placeholder="ค้นหา..." [(ngModel)]="search" (keyup.enter)="load()" />
+      <div class="panel">
+      <div class="panel-head">
+        <div class="search-field">
+          <i class="ph ph-magnifying-glass"></i>
+          <input pInputText placeholder="ค้นหาเลขที่ใบแจ้งหนี้" [(ngModel)]="search" (keyup.enter)="load()" />
+        </div>
         <p-select
           [options]="profileOptions()"
           [(ngModel)]="profileId"
@@ -44,12 +46,13 @@ import { StatusTagComponent } from '../../../shared/status-tag.component';
           styleClass="w-64"
         />
         <p-select [options]="statusOptions" [(ngModel)]="invoiceStatus" optionLabel="label" optionValue="value" (onChange)="load()" styleClass="w-44" />
-        <p-button label="ค้นหา" icon="pi pi-search" (onClick)="load()" />
+        <p-button label="ค้นหา" icon="ph ph-magnifying-glass" severity="secondary" (onClick)="load()" />
       </div>
       @if (loading()) { <div class="flex justify-center py-8"><p-progressSpinner /></div> }
-      @else if (error()) { <app-empty-state [message]="error()!" variant="error" /> }
-      @else if (!items().length) { <app-empty-state message="ไม่พบใบแจ้งหนี้" /> }
+      @else if (error()) { <div class="p-3"><app-empty-state [message]="error()!" variant="error" /></div> }
+      @else if (!items().length) { <div class="p-3"><app-empty-state message="ไม่พบใบแจ้งหนี้" /></div> }
       @else {
+        <div class="panel-body">
         <p-table [value]="items()" [paginator]="true" [rows]="limit" [totalRecords]="total()" [lazy]="true" (onPage)="onPage($event)">
           <ng-template pTemplate="header"><tr><th>เลขที่</th><th>โปรไฟล์</th><th>จำนวนเงิน</th><th>ครบกำหนด</th><th class="col-fit">สถานะ</th><th class="col-fit">จัดการ</th></tr></ng-template>
           <ng-template pTemplate="body" let-row>
@@ -60,13 +63,14 @@ import { StatusTagComponent } from '../../../shared/status-tag.component';
               <td>{{ row.dueDate | date:'mediumDate' }}</td>
               <td class="col-fit"><app-status-tag [value]="row.status" /></td>
               <td class="col-fit" (click)="$event.stopPropagation()">
-                <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" (onClick)="open(row._id)" ariaLabel="แก้ไข" />
+                <p-button icon="ph ph-pencil-simple" [rounded]="true" [text]="true" (onClick)="open(row._id)" ariaLabel="แก้ไข" />
               </td>
             </tr>
           </ng-template>
         </p-table>
+        </div>
       }
-      </p-card>
+      </div>
     </div>
   `,
 })

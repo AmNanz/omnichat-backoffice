@@ -1,21 +1,25 @@
 import { Component, Input } from '@angular/core';
-import { TagModule } from 'primeng/tag';
-import { enumLabel, statusSeverity } from '../models/common.model';
+import { enumLabel } from '../models/common.model';
+import { chipClass } from './ui';
 
 @Component({
   selector: 'app-status-tag',
   standalone: true,
-  imports: [TagModule],
-  template: `<p-tag [value]="label" [severity]="severity" />`,
+  template: `
+    <span [class]="cssClass">
+      <span class="dot"></span>
+      {{ label }}
+    </span>
+  `,
 })
 export class StatusTagComponent {
   @Input({ required: true }) value = '';
 
-  get label() {
+  get label(): string {
     return enumLabel(this.value);
   }
 
-  get severity() {
-    return statusSeverity(this.value);
+  get cssClass(): string {
+    return chipClass(this.value);
   }
 }

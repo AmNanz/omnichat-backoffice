@@ -1,57 +1,195 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
 import { DatePickerModule } from 'primeng/datepicker';
 import { InputTextModule } from 'primeng/inputtext';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SelectModule } from 'primeng/select';
-import { EntityStatus } from '../../../models/common.model';
+import { EntityStatus, enumLabel } from '../../../models/common.model';
+import { AuditLog, UsageByProfile } from '../../../models/misc.model';
 import { Package } from '../../../models/package.model';
 import { Profile } from '../../../models/profile.model';
 import { CompaniesService } from '../../../services/companies.service';
 import { apiErrorMessage, toIsoDate } from '../../../services/http-utils';
+import { AuditLogsService, UsageService } from '../../../services/misc.service';
 import { PackagesService } from '../../../services/packages.service';
 import { ProfilesService } from '../../../services/profiles.service';
 import { ConfirmHelper } from '../../../shared/confirm.helper';
 import { EmptyStateComponent } from '../../../shared/empty-state.component';
-import { PageHeaderComponent } from '../../../shared/page-header.component';
+import { StatusTagComponent } from '../../../shared/status-tag.component';
+import { actionIcon, chipClass, daysUntil, percent, quotaTone } from '../../../shared/ui';
+
+interface QuotaBar {
+  label: string;
+  text: string;
+  pct: number;
+  color: string;
+}
 
 @Component({
   selector: 'app-company-detail',
   standalone: true,
   imports: [
+    DatePipe,
     ReactiveFormsModule,
     ButtonModule,
-    CardModule,
     DatePickerModule,
     InputTextModule,
     SelectModule,
     ProgressSpinnerModule,
-    PageHeaderComponent,
     EmptyStateComponent,
+    StatusTagComponent,
+  ],
+  styles: [
+    `
+      .detail-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 340px;
+        gap: 16px;
+        align-items: start;
+      }
+
+      @media (max-width: 1100px) {
+        .detail-grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      .rail-card {
+        padding: 14px;
+      }
+
+      .quota-row {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin-top: 10px;
+      }
+
+      .quota-row .labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+      }
+
+      .timeline-row {
+        display: flex;
+        gap: 10px;
+        padding: 7px 0;
+      }
+
+      .timeline-icon {
+        width: 22px;
+        height: 22px;
+        flex: none;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: var(--color-neutral-900);
+        box-shadow: inset 0 0 0 1px var(--color-divider);
+        font-size: 12px;
+      }
+
+      .timeline-text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.35;
+        min-width: 0;
+      }
+
+      .timeline-text strong {
+        font-size: 13px;
+        font-weight: 400;
+      }
+
+      .timeline-text span {
+        font-size: 11px;
+        color: var(--color-neutral-600);
+      }
+    `,
   ],
   template: `
     <div class="page">
-      <app-page-header [title]="isNew ? 'เพิ่มบริษัท' : 'แก้ไขบริษัท'" />
-
       @if (loading()) {
-        <p-card>
+        <div class="surface-card surface-pad">
           <div class="flex justify-center py-8"><p-progressSpinner /></div>
-        </p-card>
+        </div>
       } @else if (error()) {
-        <p-card>
+        <div class="surface-card surface-pad">
           <app-empty-state [message]="error()!" variant="error" />
-        </p-card>
+        </div>
       } @else {
-        <form class="detail-form" [formGroup]="form" (ngSubmit)="save()">
-          <p-card>
+        <div class="flex items-center gap-3 flex-wrap">
+          <p-button
+            label="บริษัท"
+            icon="ph ph-arrow-left"
+            severity="secondary"
+            (onClick)="back()"
+          />
+          <div class="flex-1 min-w-[200px]">
+            <div class="flex items-center gap-[9px] flex-wrap">
+              <h1 class="m-0 text-[25px] font-medium tracking-[-0.02em]">
+                {{ isNew ? 'เพิ่มบริษัท' : form.controls.name.value || 'บริษัท' }}
+              </h1>
+              @if (!isNew) {
+                <app-status-tag [value]="currentStatus()" />
+              }
+            </div>
+            @if (!isNew && metaLine()) {
+              <p class="m-0 mt-1 text-[13px] text-[var(--color-neutral-500)]">{{ metaLine() }}</p>
+            }
+          </div>
+          <div class="flex gap-2 flex-wrap">
+            @if (!isNew) {
+              @if (currentStatus() !== 'ACTIVE') {
+                <p-button
+                  type="button"
+                  label="เปิดใช้งาน"
+                  icon="ph ph-check-circle"
+                  severity="secondary"
+                  (onClick)="enable()"
+                  data-testid="company-activate"
+                />
+              } @else {
+                <p-button
+                  type="button"
+                  label="ระงับ"
+                  icon="ph ph-pause"
+                  severity="secondary"
+                  (onClick)="disable()"
+                  data-testid="company-suspend"
+                />
+              }
+              <p-button
+                type="button"
+                label="ลบ"
+                icon="ph ph-trash"
+                severity="danger"
+                (onClick)="remove()"
+                data-testid="company-delete"
+              />
+            }
+            <p-button
+              type="button"
+              label="บันทึก"
+              icon="ph ph-check"
+              [loading]="saving()"
+              (onClick)="save()"
+              data-testid="company-save"
+            />
+          </div>
+        </div>
+
+        <div class="detail-grid">
+          <form class="detail-form surface-card surface-pad" [formGroup]="form" (ngSubmit)="save()">
             <div class="form-grid">
               <div class="form-section-title">ข้อมูลบริษัท</div>
               <div class="form-field">
-                <label>ชื่อ</label>
+                <label>ชื่อบริษัท</label>
                 <input pInputText formControlName="name" data-testid="company-name" />
               </div>
               <div class="form-field">
@@ -89,6 +227,9 @@ import { PageHeaderComponent } from '../../../shared/page-header.component';
                   data-testid="company-package"
                 />
               </div>
+
+              <hr class="hr" style="grid-column: 1 / -1" />
+
               <div class="form-section-title">กำหนดการ</div>
               <div class="form-field">
                 <label>วันเริ่มต้น</label>
@@ -110,57 +251,77 @@ import { PageHeaderComponent } from '../../../shared/page-header.component';
                   data-testid="company-expiration-date"
                 />
               </div>
+              @if (expiryHint(); as hint) {
+                <p class="form-hint" style="grid-column: 1 / -1">{{ hint }}</p>
+              }
             </div>
+
             <div class="form-actions">
               <p-button
                 type="button"
                 label="ย้อนกลับ"
+                icon="ph ph-arrow-left"
                 severity="secondary"
-                [outlined]="true"
                 (onClick)="back()"
               />
               <div class="form-actions-right">
-                @if (!isNew) {
-                  @if (currentStatus() !== 'ACTIVE') {
-                    <p-button
-                      type="button"
-                      label="เปิดใช้งาน"
-                      severity="success"
-                      [outlined]="true"
-                      (onClick)="enable()"
-                      data-testid="company-activate"
-                    />
-                  }
-                  @if (currentStatus() === 'ACTIVE') {
-                    <p-button
-                      type="button"
-                      label="ระงับ"
-                      severity="warn"
-                      [outlined]="true"
-                      (onClick)="disable()"
-                      data-testid="company-suspend"
-                    />
-                  }
-                  <p-button
-                    type="button"
-                    label="ลบ"
-                    severity="danger"
-                    [outlined]="true"
-                    (onClick)="remove()"
-                    data-testid="company-delete"
-                  />
-                }
                 <p-button
                   type="submit"
                   label="บันทึก"
-                  icon="pi pi-check"
+                  icon="ph ph-check"
                   [loading]="saving()"
-                  data-testid="company-save"
                 />
               </div>
             </div>
-          </p-card>
-        </form>
+          </form>
+
+          @if (!isNew) {
+            <div class="flex flex-col gap-3">
+              @if (quotaBars().length) {
+                <div class="surface-card rail-card">
+                  <div class="section-label">โควตาของโปรไฟล์</div>
+                  @for (bar of quotaBars(); track bar.label) {
+                    <div class="quota-row">
+                      <div class="labels">
+                        <span class="text-[var(--color-neutral-300)]">{{ bar.label }}</span>
+                        <span class="text-[var(--color-neutral-400)]">{{ bar.text }}</span>
+                      </div>
+                      <div class="meter">
+                        <div
+                          class="meter-fill"
+                          [style.width.%]="bar.pct"
+                          [style.background]="bar.color"
+                        ></div>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+
+              <div class="surface-card rail-card">
+                <div class="section-label mb-1">ไทม์ไลน์</div>
+                @if (!timeline().length) {
+                  <p class="form-hint mt-2">ยังไม่มีประวัติการเปลี่ยนแปลง</p>
+                } @else {
+                  @for (entry of timeline(); track entry._id) {
+                    <div class="timeline-row">
+                      <span class="timeline-icon">
+                        <i [class]="icon(entry.action)"></i>
+                      </span>
+                      <span class="timeline-text">
+                        <strong>{{ label(entry.action) }}</strong>
+                        <span>
+                          {{ entry.userName || entry.userId || 'ระบบ' }} ·
+                          {{ entry.createdAt | date: 'medium' }}
+                        </span>
+                      </span>
+                    </div>
+                  }
+                }
+              </div>
+            </div>
+          }
+        </div>
       }
     </div>
   `,
@@ -172,6 +333,8 @@ export class CompanyDetailComponent implements OnInit {
   private readonly service = inject(CompaniesService);
   private readonly profilesService = inject(ProfilesService);
   private readonly packagesService = inject(PackagesService);
+  private readonly usageService = inject(UsageService);
+  private readonly auditService = inject(AuditLogsService);
   private readonly helper = inject(ConfirmHelper);
 
   readonly loading = signal(false);
@@ -180,6 +343,13 @@ export class CompanyDetailComponent implements OnInit {
   readonly currentStatus = signal<EntityStatus>('ACTIVE');
   readonly profiles = signal<Profile[]>([]);
   readonly packages = signal<Package[]>([]);
+  readonly quotaBars = signal<QuotaBar[]>([]);
+  readonly timeline = signal<AuditLog[]>([]);
+  readonly metaLine = signal('');
+
+  readonly icon = actionIcon;
+  readonly label = enumLabel;
+  readonly chipClass = chipClass;
 
   id = '';
   isNew = true;
@@ -205,6 +375,18 @@ export class CompanyDetailComponent implements OnInit {
       label: item.name,
       value: String(item._id),
     }));
+  }
+
+  /** A countdown under the date fields, mirroring the list's expiry note. */
+  expiryHint(): string | null {
+    const days = daysUntil(this.form.controls.expirationDate.value);
+    if (days == null) {
+      return null;
+    }
+    if (days < 0) {
+      return `หมดอายุแล้ว ${Math.abs(days)} วัน`;
+    }
+    return `เหลืออีก ${days} วัน — ระบบจะแจ้งเตือนอัตโนมัติ 30 วันก่อนหมดอายุ`;
   }
 
   ngOnInit(): void {
@@ -254,18 +436,62 @@ export class CompanyDetailComponent implements OnInit {
           profileId,
           packageId,
           startDate: item.startDate ? new Date(item.startDate) : null,
-          expirationDate: item.expirationDate
-            ? new Date(item.expirationDate)
-            : null,
+          expirationDate: item.expirationDate ? new Date(item.expirationDate) : null,
         });
         this.currentStatus.set(item.status);
+        this.metaLine.set(
+          [item.slug, item.updatedAt ? `แก้ไขล่าสุด ${new Date(item.updatedAt).toLocaleString('th-TH')}` : '']
+            .filter(Boolean)
+            .join(' · '),
+        );
         this.loading.set(false);
+        this.loadRail(profileId);
       },
       error: (err) => {
         this.error.set(apiErrorMessage(err));
         this.loading.set(false);
       },
     });
+  }
+
+  /**
+   * The right rail reads real data only: quota comes from the profile's usage
+   * record, the timeline from the audit log for this company's id.
+   */
+  private loadRail(profileId: string): void {
+    this.usageService
+      .byProfile(profileId)
+      .pipe(catchError(() => of(null)))
+      .subscribe((usage: UsageByProfile | null) => {
+        if (!usage) {
+          this.quotaBars.set([]);
+          return;
+        }
+        this.quotaBars.set([
+          this.toBar('บริษัท', usage.companies),
+          this.toBar('ผู้ใช้', usage.users),
+        ]);
+      });
+
+    this.auditService
+      .list({ page: 1, limit: 50, module: 'companies', resourceId: this.id })
+      .pipe(catchError(() => of(null)))
+      .subscribe((res) => {
+        const rows = (res?.items ?? []).filter(
+          (row) => !row.resourceId || String(row.resourceId) === this.id,
+        );
+        this.timeline.set(rows.slice(0, 6));
+      });
+  }
+
+  private toBar(label: string, quota: { used: number; limit: number }): QuotaBar {
+    const pct = percent(quota.used, quota.limit);
+    return {
+      label,
+      text: `${quota.used} / ${quota.limit}`,
+      pct,
+      color: quotaTone(pct),
+    };
   }
 
   private ensureProfileOption(profileId: string): void {
@@ -299,9 +525,7 @@ export class CompanyDetailComponent implements OnInit {
       expirationDate: toIsoDate(raw.expirationDate) ?? null,
     };
     this.saving.set(true);
-    const req = this.isNew
-      ? this.service.create(payload)
-      : this.service.update(this.id, payload);
+    const req = this.isNew ? this.service.create(payload) : this.service.update(this.id, payload);
     req.subscribe({
       next: (item) => {
         this.saving.set(false);

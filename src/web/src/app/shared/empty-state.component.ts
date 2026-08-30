@@ -5,7 +5,7 @@ import { Component, Input } from '@angular/core';
   standalone: true,
   template: `
     <div class="state-message" [class.error]="variant === 'error'">
-      <i [class]="variant === 'error' ? 'pi pi-exclamation-circle' : 'pi pi-inbox'"></i>
+      <i [class]="variant === 'error' ? 'ph ph-warning-circle' : 'ph ph-tray'" style="font-size: 18px"></i>
       <span>{{ message }}</span>
     </div>
   `,

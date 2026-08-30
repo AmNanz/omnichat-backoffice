@@ -120,7 +120,7 @@ import { StatusTagComponent } from '../../../shared/status-tag.component';
             <div class="form-actions">
               <p-button type="button" label="ย้อนกลับ" severity="secondary" [outlined]="true" (onClick)="back()" />
               <div class="form-actions-right">
-                <p-button type="submit" label="บันทึก" icon="pi pi-check" [loading]="saving()" data-testid="profile-save" />
+                <p-button type="submit" label="บันทึก" icon="ph ph-check" [loading]="saving()" data-testid="profile-save" />
               </div>
             </div>
           </p-card>
@@ -134,7 +134,7 @@ import { StatusTagComponent } from '../../../shared/status-tag.component';
               </div>
               <p-button
                 label="เพิ่มบริษัท"
-                icon="pi pi-plus"
+                icon="ph ph-plus"
                 (onClick)="addCompany()"
                 data-testid="profile-add-company"
               />
@@ -163,7 +163,7 @@ import { StatusTagComponent } from '../../../shared/status-tag.component';
                     <td>{{ row.expirationDate | date: 'mediumDate' }}</td>
                     <td class="col-fit" (click)="$event.stopPropagation()">
                       <p-button
-                        icon="pi pi-pencil"
+                        icon="ph ph-pencil-simple"
                         [rounded]="true"
                         [text]="true"
                         (onClick)="openCompany(row._id)"

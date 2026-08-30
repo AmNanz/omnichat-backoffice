@@ -97,7 +97,7 @@ import { PageHeaderComponent } from '../../../shared/page-header.component';
                 }
                 <p-button type="button" label="ลบ" severity="danger" [outlined]="true" (onClick)="remove()" data-testid="subscription-delete" />
               }
-              <p-button type="submit" label="บันทึก" icon="pi pi-check" [loading]="saving()" data-testid="subscription-save" />
+              <p-button type="submit" label="บันทึก" icon="ph ph-check" [loading]="saving()" data-testid="subscription-save" />
               </div>
             </div>
           </p-card>
