@@ -5,9 +5,31 @@
     <title>mindchat ระบบจัดการ</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="color-scheme" content="dark light" />
     <meta name="theme-color" content="#161826" />
     <link rel="icon" type="image/png" href="brand/mindchat-mark.png" />
+    <script>
+      // Applied before first paint so the page never flashes the wrong ground.
+      // ThemeService owns the same value once Angular boots.
+      (function () {
+        try {
+          var stored = localStorage.getItem('backoffice.theme');
+          var light =
+            stored === 'light' ||
+            (!stored && window.matchMedia('(prefers-color-scheme: light)').matches);
+          var root = document.documentElement;
+          root.classList.toggle('app-light', light);
+          root.classList.toggle('app-dark', !light);
+          if (light) {
+            document
+              .querySelector('meta[name="theme-color"]')
+              .setAttribute('content', '#eef0f8');
+          }
+        } catch (e) {
+          // Site data blocked: the markup's own app-dark class stands.
+        }
+      })();
+    </script>
   </head>
   <body>
     <app-root></app-root>

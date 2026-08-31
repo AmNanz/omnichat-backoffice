@@ -8,6 +8,7 @@ import { PasswordModule } from 'primeng/password';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../services/auth.service';
 import { ConfirmHelper } from '../../../shared/confirm.helper';
+import { ThemeService } from '../../../shared/theme.service';
 import { apiErrorMessage } from '../../../services/http-utils';
 
 @Component({
@@ -20,6 +21,15 @@ import { apiErrorMessage } from '../../../services/http-utils';
         <div class="login-brand">
           <img src="brand/mindchat-wordmark.png" alt="mindchat" />
           <span>Back-office</span>
+          <button
+            type="button"
+            class="login-theme"
+            [attr.aria-label]="theme.theme() === 'dark' ? 'เปลี่ยนเป็นธีมสว่าง' : 'เปลี่ยนเป็นธีมมืด'"
+            (click)="theme.toggle()"
+            data-testid="login-theme-toggle"
+          >
+            <i [class]="theme.theme() === 'dark' ? 'ph ph-sun' : 'ph ph-moon'"></i>
+          </button>
         </div>
 
         <div class="login-hero-body">
@@ -126,7 +136,7 @@ import { apiErrorMessage } from '../../../services/http-utils';
           color-mix(in srgb, var(--color-accent) 22%, transparent),
           transparent 60%
         ),
-        linear-gradient(160deg, #1c1f31 0%, #141624 70%);
+        linear-gradient(160deg, var(--login-hero-from) 0%, var(--login-hero-to) 70%);
     }
 
     .login-brand {
@@ -139,6 +149,25 @@ import { apiErrorMessage } from '../../../services/http-utils';
       height: 26px;
       width: auto;
       object-fit: contain;
+    }
+
+    .login-theme {
+      margin-left: auto;
+      display: inline-grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      font-size: 17px;
+      color: var(--color-neutral-400);
+      background: transparent;
+      border: 1px solid var(--color-divider);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+    }
+
+    .login-theme:hover {
+      background: color-mix(in srgb, var(--color-text) 7%, transparent);
+      color: var(--color-text);
     }
 
     .login-brand span {
@@ -158,7 +187,7 @@ import { apiErrorMessage } from '../../../services/http-utils';
       font-size: 11px;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--color-accent-300);
+      color: var(--color-accent-text);
       margin-bottom: 14px;
     }
 
@@ -196,7 +225,7 @@ import { apiErrorMessage } from '../../../services/http-utils';
 
     .login-points i {
       font-size: 17px;
-      color: var(--color-accent);
+      color: var(--color-accent-text);
       width: 20px;
       text-align: center;
     }
@@ -290,6 +319,7 @@ export class LoginComponent {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
   private readonly helper = inject(ConfirmHelper);
+  readonly theme = inject(ThemeService);
 
   readonly loading = signal(false);
 

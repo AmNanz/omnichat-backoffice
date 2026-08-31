@@ -195,7 +195,8 @@
    Nocturne design tokens. Every colour, radius, spacing and shadow in the
    back-office comes from here — see the design system's readme.
    ───────────────────────────────────────────────────────────────────── */
-:root {
+:root,
+html.app-dark {
   --color-bg: #161826;
   --color-bg-lift: #1b1d2c;
   --color-surface: #232532;
@@ -260,8 +261,101 @@
   --shadow-md: 0 0 0 1px #595d6c, 0 6px 18px rgba(0, 0, 0, 0.55);
   --shadow-lg: 0 0 0 1px #9397ab, 0 16px 40px rgba(0, 0, 0, 0.65);
 
+  /* Accent-coloured text. On this ground the accent already clears 3:1, so it
+     is the accent itself; the light theme deepens it. */
+  --color-accent-text: var(--color-accent);
+
+  /* The wash behind a modal, and the login hero's lit panel. */
+  --scrim: #0d0e18;
+  --login-hero-from: #1c1f31;
+  --login-hero-to: #141624;
+
   color-scheme: dark;
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Light theme. Same system, opposite ground: the accent, the radii, the
+   spacing and the type all stay put — only the values that describe distance
+   from the ground change.
+
+   The neutral and accent ramps are REVERSED here rather than replaced. In this
+   system a ramp step means "how far from the ground", not "how light": step
+   100 is the value furthest from the page (text), step 900 the value nearest
+   it (a subtle fill). Reversing keeps every existing `var(--color-neutral-*)`
+   correct in both themes without touching a single component rule, and the
+   ramps were generated on one shared perceptual lightness scale, so the pairs
+   swap cleanly.
+   ───────────────────────────────────────────────────────────────────── */
+html.app-light {
+  --color-bg: #eef0f8;
+  --color-bg-lift: #f7f8fc;
+  --color-surface: #fbfbfe;
+  --color-text: #1c1d2b;
+  --color-accent: #6f62b8; /* the blurple, deepened to hold its own against a
+     light ground — the dark theme's #9184d9 washes out here */
+  --color-divider: color-mix(in srgb, #1c1d2b 14%, transparent);
+
+  /* Reversed: 100 is furthest from the ground, 900 nearest it. Steps 100-600
+     carry text and are held at 4.5:1 or better against the surface — a light
+     ground has less headroom than a dark one, so these run darker than a
+     straight inversion of the dark ramp would give. 700-900 are fills and
+     borders, never text. */
+  --color-neutral-100: #23242e;
+  --color-neutral-200: #33353f;
+  --color-neutral-300: #464a58;
+  --color-neutral-400: #545869;
+  --color-neutral-500: #5f6374;
+  --color-neutral-600: #6b6f80;
+  --color-neutral-700: #b9bdcc;
+  --color-neutral-800: #dde0ec;
+  --color-neutral-900: #eaecf5;
+
+  --color-accent-100: #2b2741;
+  --color-accent-200: #423a6a;
+  --color-accent-300: #5d5294;
+  --color-accent-400: #796cbf;
+  --color-accent-500: #968ae0;
+  --color-accent-600: #b5abfc;
+  --color-accent-700: #d2cefd;
+  --color-accent-800: #e7e5fe;
+  --color-accent-900: #f5f4ff;
+
+  /* Accent-coloured text needs more weight than the accent line does. */
+  --color-accent-text: #574a9e;
+
+  /* Status tones carry 11px delta text, so they clear 4.5:1 too. */
+  --tone-good: #12744a;
+  --tone-warn: #8a5f08;
+  --tone-bad: #b3323e;
+  --tone-mute: #5f6374;
+
+  --tag-active-bg: #d9f2e6;
+  --tag-active-fg: #146346;
+  --tag-active-dot: #1f8a5b;
+  --tag-expired-bg: #fbe0e2;
+  --tag-expired-fg: #96303a;
+  --tag-expired-dot: #c2404b;
+  --tag-suspended-bg: #e5e7f0;
+  --tag-suspended-fg: #4a4e5e;
+  --tag-suspended-dot: #7c8093;
+  --tag-soon-bg: #fbeed3;
+  --tag-soon-fg: #7d550a;
+  --tag-soon-dot: #a8730d;
+  --tag-accent-bg: #e7e5fe;
+  --tag-accent-fg: #453a80;
+
+  /* On a light ground elevation is ink, not an edge plus darkness. */
+  --shadow-sm: 0 0 0 1px #dde0ec;
+  --shadow-md: 0 0 0 1px #c2c6d6, 0 6px 18px rgba(28, 29, 43, 0.1);
+  --shadow-lg: 0 0 0 1px #c2c6d6, 0 16px 40px rgba(28, 29, 43, 0.16);
+
+  --scrim: #6b6f80;
+  --login-hero-from: #e9e7fb;
+  --login-hero-to: #f6f7fc;
+
+  color-scheme: light;
+}
+
 
 /* PrimeNG reads these at runtime; pointing them at the tokens above keeps
    every PrimeNG surface on the Nocturne palette without per-component CSS. */
@@ -322,7 +416,7 @@ h6 {
 }
 
 a {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
   text-decoration: none;
   text-underline-offset: 3px;
 }
@@ -531,7 +625,7 @@ app-login {
   color: var(--tone-bad);
 }
 .tone-accent {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 .tone-mute {
   color: var(--tone-mute);
@@ -906,13 +1000,13 @@ p-select,
 .p-button:not(.p-button-text):not(.p-button-link):not(.p-button-outlined) {
   background: transparent;
   border-color: var(--color-accent);
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 .p-button:not(.p-button-text):not(.p-button-link):not(.p-button-outlined):hover {
   background: color-mix(in srgb, var(--color-accent) 12%, transparent);
   border-color: var(--color-accent);
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 .p-button:not(.p-button-text):not(.p-button-link):not(.p-button-outlined):active {
@@ -1123,7 +1217,7 @@ p-select,
 .p-paginator .p-paginator-page.p-paginator-page-selected {
   background: transparent;
   border: 1px solid var(--color-accent);
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 .p-paginator .p-paginator-page:not(.p-paginator-page-selected):hover {
@@ -1250,7 +1344,7 @@ p-select,
 }
 
 .p-tab.p-tab-active {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
   box-shadow: inset 0 -2px 0 var(--color-accent);
 }
 
