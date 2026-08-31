@@ -8,6 +8,7 @@ import { AuthService } from '../../../services/auth.service';
 import { CompaniesService } from '../../../services/companies.service';
 import { ProfilesService } from '../../../services/profiles.service';
 import { UsersService } from '../../../services/users.service';
+import { ThemeService } from '../../../shared/theme.service';
 import { SummaryStore, initials } from '../../../shared/ui';
 
 interface NavItem {
@@ -411,7 +412,7 @@ const NAV_COLLAPSED_KEY = 'backoffice.nav.collapsed';
         align-items: flex-start;
         justify-items: center;
         padding: 96px var(--space-4) var(--space-4);
-        background: color-mix(in srgb, #0d0e18 62%, transparent);
+        background: color-mix(in srgb, var(--scrim) 62%, transparent);
         backdrop-filter: blur(2px);
       }
 
@@ -700,6 +701,19 @@ const NAV_COLLAPSED_KEY = 'backoffice.nav.collapsed';
         <div class="topbar-right">
           <button
             type="button"
+            class="chrome-btn icon"
+            [title]="themeService.theme() === 'dark' ? 'ธีมสว่าง' : 'ธีมมืด'"
+            [attr.aria-label]="themeService.theme() === 'dark' ? 'เปลี่ยนเป็นธีมสว่าง' : 'เปลี่ยนเป็นธีมมืด'"
+            (click)="themeService.toggle()"
+            data-testid="theme-toggle"
+          >
+            <i
+              [class]="themeService.theme() === 'dark' ? 'ph ph-sun' : 'ph ph-moon'"
+              style="font-size: 17px"
+            ></i>
+          </button>
+          <button
+            type="button"
             class="chrome-btn icon bell"
             title="การแจ้งเตือน"
             aria-label="การแจ้งเตือน"
@@ -787,6 +801,7 @@ const NAV_COLLAPSED_KEY = 'backoffice.nav.collapsed';
 export class BackofficeLayoutComponent implements OnInit {
   readonly auth = inject(AuthService);
   readonly summary = inject(SummaryStore);
+  readonly themeService = inject(ThemeService);
   private readonly router = inject(Router);
   private readonly companies = inject(CompaniesService);
   private readonly profiles = inject(ProfilesService);

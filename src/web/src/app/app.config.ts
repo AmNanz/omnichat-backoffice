@@ -72,6 +72,66 @@ const Nocturne = definePreset(Lara, {
   semantic: {
     primary: NOCTURNE_ACCENT,
     colorScheme: {
+      light: {
+        surface: {
+          0: '#fbfbfe',
+          50: '#f4f5fa',
+          100: '#eaecf5',
+          200: '#dde0ec',
+          300: '#c2c6d6',
+          400: '#9397ab',
+          500: '#7c8093',
+          600: '#6b6f80',
+          700: '#595d6c',
+          800: '#3f424d',
+          900: '#292b31',
+          950: '#1c1d2b',
+        },
+        primary: {
+          color: '#6f62b8',
+          contrastColor: '#fbfbfe',
+          hoverColor: '#574a9e',
+          activeColor: '#453a80',
+        },
+        highlight: {
+          background: 'color-mix(in srgb, #6f62b8 12%, transparent)',
+          focusBackground: 'color-mix(in srgb, #6f62b8 20%, transparent)',
+          color: '#453a80',
+          focusColor: '#2b2741',
+        },
+        content: {
+          background: '#fbfbfe',
+          hoverBackground: 'color-mix(in srgb, #1c1d2b 5%, transparent)',
+          borderColor: 'color-mix(in srgb, #1c1d2b 14%, transparent)',
+          color: '#1c1d2b',
+          hoverColor: '#292b31',
+        },
+        text: {
+          color: '#1c1d2b',
+          hoverColor: '#292b31',
+          mutedColor: '#7c8093',
+          hoverMutedColor: '#6b6f80',
+        },
+        formField: {
+          background: '#fbfbfe',
+          disabledBackground: '#eaecf5',
+          filledBackground: '#f4f5fa',
+          borderColor: 'color-mix(in srgb, #1c1d2b 14%, transparent)',
+          hoverBorderColor: 'color-mix(in srgb, #1c1d2b 38%, transparent)',
+          focusBorderColor: '#6f62b8',
+          invalidBorderColor: '#c2404b',
+          color: '#1c1d2b',
+          disabledColor: '#9397ab',
+          placeholderColor: '#9397ab',
+          floatLabelColor: '#7c8093',
+          iconColor: '#7c8093',
+        },
+        overlay: {
+          select: { background: '#fbfbfe', borderColor: 'color-mix(in srgb, #1c1d2b 14%, transparent)', color: '#1c1d2b' },
+          popover: { background: '#fbfbfe', borderColor: 'color-mix(in srgb, #1c1d2b 14%, transparent)', color: '#1c1d2b' },
+          modal: { background: '#fbfbfe', borderColor: 'color-mix(in srgb, #1c1d2b 14%, transparent)', color: '#1c1d2b' },
+        },
+      },
       dark: {
         surface: NOCTURNE_SURFACE,
         primary: {
@@ -136,8 +196,8 @@ export const appConfig: ApplicationConfig = {
       theme: {
         preset: Nocturne,
         options: {
-          // `app-dark` is set on <html> in index.html — the back-office is
-          // dark-only, so the class is never toggled at runtime.
+          // ThemeService owns this class on <html>; PrimeNG's own light and
+          // dark schemes flip with it, in step with the tokens in styles.scss.
           darkModeSelector: '.app-dark',
         },
       },
